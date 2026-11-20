@@ -1,0 +1,296 @@
+dataset,b,ASR_CatBoost,ASR_TabICL,ASR_TabPFN,set
+MagicTelescope,1,0.36363636363636365,0.22727272727272727,0.4772727272727273,common
+MagicTelescope,2,0.7954545454545454,0.7272727272727273,0.8863636363636364,common
+MagicTelescope,3,0.9545454545454546,1.0,1.0,common
+MagicTelescope,4,1.0,1.0,1.0,common
+MagicTelescope,5,1.0,1.0,1.0,common
+MiniBooNE,1,0.6,0.9111111111111111,0.9333333333333333,common
+MiniBooNE,2,1.0,1.0,1.0,common
+MiniBooNE,3,1.0,1.0,1.0,common
+MiniBooNE,4,1.0,1.0,1.0,common
+MiniBooNE,5,1.0,1.0,1.0,common
+Pulsar-Dataset-HTRU2,1,0.5869565217391305,0.0,0.0,common
+Pulsar-Dataset-HTRU2,2,0.9347826086956522,0.2608695652173913,0.5869565217391305,common
+Pulsar-Dataset-HTRU2,3,1.0,1.0,1.0,common
+Pulsar-Dataset-HTRU2,4,1.0,1.0,1.0,common
+Pulsar-Dataset-HTRU2,5,1.0,1.0,1.0,common
+banknote-authentication,1,0.94,0.42,0.68,common
+banknote-authentication,2,0.94,0.92,0.92,common
+banknote-authentication,3,0.94,0.94,0.94,common
+banknote-authentication,4,0.98,0.94,0.94,common
+banknote-authentication,5,1.0,0.96,0.98,common
+california,1,0.21951219512195122,0.5609756097560976,0.5853658536585366,common
+california,2,0.6585365853658537,0.975609756097561,1.0,common
+california,3,0.926829268292683,1.0,1.0,common
+california,4,0.975609756097561,1.0,1.0,common
+california,5,1.0,1.0,1.0,common
+climate-model-simulation-crashes,1,1.0,0.19444444444444445,0.9444444444444444,common
+climate-model-simulation-crashes,2,1.0,1.0,1.0,common
+climate-model-simulation-crashes,3,1.0,1.0,1.0,common
+climate-model-simulation-crashes,4,1.0,1.0,1.0,common
+climate-model-simulation-crashes,5,1.0,1.0,1.0,common
+codrna,1,0.2708333333333333,0.3125,0.7291666666666666,common
+codrna,2,0.625,0.9583333333333334,1.0,common
+codrna,3,0.9583333333333334,1.0,1.0,common
+codrna,4,1.0,1.0,1.0,common
+codrna,5,1.0,1.0,1.0,common
+covertype,1,0.2972972972972973,0.9459459459459459,1.0,common
+covertype,2,0.6216216216216216,1.0,1.0,common
+covertype,3,0.8378378378378378,1.0,1.0,common
+covertype,4,0.972972972972973,1.0,1.0,common
+covertype,5,0.972972972972973,1.0,1.0,common
+credit,1,0.1794871794871795,0.0,0.10256410256410256,common
+credit,2,0.6153846153846154,0.1794871794871795,0.358974358974359,common
+credit,3,0.8461538461538461,0.8974358974358975,0.717948717948718,common
+credit,4,0.9487179487179487,1.0,0.9743589743589743,common
+credit,5,0.9743589743589743,1.0,1.0,common
+creditcard,1,1.0,0.48,0.6,common
+creditcard,2,1.0,0.92,1.0,common
+creditcard,3,1.0,1.0,1.0,common
+creditcard,4,1.0,1.0,1.0,common
+creditcard,5,1.0,1.0,1.0,common
+delta_ailerons,1,0.17391304347826086,0.021739130434782608,0.0,common
+delta_ailerons,2,0.43478260869565216,0.15217391304347827,0.21739130434782608,common
+delta_ailerons,3,0.6739130434782609,0.7608695652173914,0.8260869565217391,common
+delta_ailerons,4,0.8695652173913043,1.0,1.0,common
+delta_ailerons,5,0.9782608695652174,1.0,1.0,common
+eeg-eye-state,1,0.4888888888888889,1.0,1.0,common
+eeg-eye-state,2,0.9333333333333333,1.0,1.0,common
+eeg-eye-state,3,0.9777777777777777,1.0,1.0,common
+eeg-eye-state,4,1.0,1.0,1.0,common
+eeg-eye-state,5,1.0,1.0,1.0,common
+electrical_grid_stability,1,0.5869565217391305,0.6956521739130435,0.717391304347826,common
+electrical_grid_stability,2,0.9565217391304348,1.0,1.0,common
+electrical_grid_stability,3,1.0,1.0,1.0,common
+electrical_grid_stability,4,1.0,1.0,1.0,common
+electrical_grid_stability,5,1.0,1.0,1.0,common
+electricity,1,0.07894736842105263,0.47368421052631576,0.8421052631578947,common
+electricity,2,0.34210526315789475,0.7894736842105263,1.0,common
+electricity,3,0.5789473684210527,0.9473684210526315,1.0,common
+electricity,4,0.7631578947368421,1.0,1.0,common
+electricity,5,0.9210526315789473,1.0,1.0,common
+elevators,1,0.3235294117647059,0.058823529411764705,0.17647058823529413,common
+elevators,2,0.5294117647058824,0.35294117647058826,0.9117647058823529,common
+elevators,3,0.8823529411764706,0.9705882352941176,1.0,common
+elevators,4,0.9411764705882353,1.0,1.0,common
+elevators,5,0.9411764705882353,1.0,1.0,common
+hazelnut-spread-contaminant,1,0.5111111111111111,0.9777777777777777,1.0,common
+hazelnut-spread-contaminant,2,0.9555555555555556,1.0,1.0,common
+hazelnut-spread-contaminant,3,1.0,1.0,1.0,common
+hazelnut-spread-contaminant,4,1.0,1.0,1.0,common
+hazelnut-spread-contaminant,5,1.0,1.0,1.0,common
+hill-valley,1,0.6551724137931034,0.5862068965517241,1.0,common
+hill-valley,2,0.7931034482758621,0.7586206896551724,1.0,common
+hill-valley,3,0.9310344827586207,0.9310344827586207,1.0,common
+hill-valley,4,1.0,0.9310344827586207,1.0,common
+hill-valley,5,1.0,0.9310344827586207,1.0,common
+house_16H,1,0.3409090909090909,0.36363636363636365,0.6363636363636364,common
+house_16H,2,0.7954545454545454,0.9090909090909091,1.0,common
+house_16H,3,0.9772727272727273,1.0,1.0,common
+house_16H,4,1.0,1.0,1.0,common
+house_16H,5,1.0,1.0,1.0,common
+jannis,1,0.7777777777777778,0.6666666666666666,1.0,common
+jannis,2,1.0,1.0,1.0,common
+jannis,3,1.0,1.0,1.0,common
+jannis,4,1.0,1.0,1.0,common
+jannis,5,1.0,1.0,1.0,common
+kin8nm,1,0.40476190476190477,0.5952380952380952,0.5,common
+kin8nm,2,0.7380952380952381,0.9523809523809523,1.0,common
+kin8nm,3,0.9761904761904762,1.0,1.0,common
+kin8nm,4,1.0,1.0,1.0,common
+kin8nm,5,1.0,1.0,1.0,common
+mammography,1,0.42857142857142855,0.2,0.22857142857142856,common
+mammography,2,0.7142857142857143,0.6285714285714286,0.6285714285714286,common
+mammography,3,0.8571428571428571,0.8571428571428571,0.8285714285714286,common
+mammography,4,0.8571428571428571,0.8571428571428571,0.8571428571428571,common
+mammography,5,0.8571428571428571,0.8571428571428571,0.8571428571428571,common
+ozone-level-8hr,1,0.6666666666666666,1.0,1.0,common
+ozone-level-8hr,2,1.0,1.0,1.0,common
+ozone-level-8hr,3,1.0,1.0,1.0,common
+ozone-level-8hr,4,1.0,1.0,1.0,common
+ozone-level-8hr,5,1.0,1.0,1.0,common
+phoneme,1,0.17073170731707318,0.975609756097561,0.975609756097561,common
+phoneme,2,0.43902439024390244,1.0,1.0,common
+phoneme,3,0.8536585365853658,1.0,1.0,common
+phoneme,4,0.9512195121951219,1.0,1.0,common
+phoneme,5,1.0,1.0,1.0,common
+polish_companies_bankruptcy,1,0.7027027027027027,0.5945945945945946,0.6216216216216216,common
+polish_companies_bankruptcy,2,0.972972972972973,0.972972972972973,1.0,common
+polish_companies_bankruptcy,3,1.0,1.0,1.0,common
+polish_companies_bankruptcy,4,1.0,1.0,1.0,common
+polish_companies_bankruptcy,5,1.0,1.0,1.0,common
+puma8NH,1,0.36585365853658536,0.0,0.21951219512195122,common
+puma8NH,2,0.7317073170731707,0.024390243902439025,1.0,common
+puma8NH,3,0.975609756097561,0.0975609756097561,1.0,common
+puma8NH,4,1.0,0.6097560975609756,1.0,common
+puma8NH,5,1.0,0.975609756097561,1.0,common
+spambase,1,0.3829787234042553,0.723404255319149,0.7446808510638298,common
+spambase,2,0.6382978723404256,0.8085106382978723,0.7872340425531915,common
+spambase,3,0.8723404255319149,0.8297872340425532,0.851063829787234,common
+spambase,4,0.9148936170212766,0.851063829787234,0.8723404255319149,common
+spambase,5,0.9148936170212766,0.9148936170212766,0.8723404255319149,common
+stock,1,0.6530612244897959,0.9183673469387755,0.5306122448979592,common
+stock,2,0.9591836734693877,1.0,1.0,common
+stock,3,1.0,1.0,1.0,common
+stock,4,1.0,1.0,1.0,common
+stock,5,1.0,1.0,1.0,common
+wdbc,1,1.0,0.40425531914893614,0.8936170212765957,common
+wdbc,2,1.0,0.9787234042553191,1.0,common
+wdbc,3,1.0,1.0,1.0,common
+wdbc,4,1.0,1.0,1.0,common
+wdbc,5,1.0,1.0,1.0,common
+wilt,1,0.7272727272727273,0.0,0.022727272727272728,common
+wilt,2,0.9772727272727273,0.18181818181818182,0.75,common
+wilt,3,1.0,0.9772727272727273,1.0,common
+wilt,4,1.0,1.0,1.0,common
+wilt,5,1.0,1.0,1.0,common
+wine,1,0.34210526315789475,0.9210526315789473,0.9210526315789473,common
+wine,2,0.6842105263157895,0.9210526315789473,0.9736842105263158,common
+wine,3,0.9210526315789473,0.9473684210526315,0.9736842105263158,common
+wine,4,0.9736842105263158,1.0,1.0,common
+wine,5,1.0,1.0,1.0,common
+MagicTelescope,1,0.37777777777777777,0.2553191489361702,0.48936170212765956,without hill-valley
+MagicTelescope,2,0.8,0.7446808510638298,0.8723404255319149,without hill-valley
+MagicTelescope,3,0.9555555555555556,1.0,1.0,without hill-valley
+MagicTelescope,4,1.0,1.0,1.0,without hill-valley
+MagicTelescope,5,1.0,1.0,1.0,without hill-valley
+MiniBooNE,1,0.6170212765957447,0.9111111111111111,0.9347826086956522,without hill-valley
+MiniBooNE,2,1.0,1.0,1.0,without hill-valley
+MiniBooNE,3,1.0,1.0,1.0,without hill-valley
+MiniBooNE,4,1.0,1.0,1.0,without hill-valley
+MiniBooNE,5,1.0,1.0,1.0,without hill-valley
+Pulsar-Dataset-HTRU2,1,0.5869565217391305,0.0,0.0,without hill-valley
+Pulsar-Dataset-HTRU2,2,0.9347826086956522,0.2608695652173913,0.5869565217391305,without hill-valley
+Pulsar-Dataset-HTRU2,3,1.0,1.0,1.0,without hill-valley
+Pulsar-Dataset-HTRU2,4,1.0,1.0,1.0,without hill-valley
+Pulsar-Dataset-HTRU2,5,1.0,1.0,1.0,without hill-valley
+banknote-authentication,1,0.94,0.42,0.68,without hill-valley
+banknote-authentication,2,0.94,0.92,0.92,without hill-valley
+banknote-authentication,3,0.94,0.94,0.94,without hill-valley
+banknote-authentication,4,0.98,0.94,0.94,without hill-valley
+banknote-authentication,5,1.0,0.96,0.98,without hill-valley
+california,1,0.23255813953488372,0.5909090909090909,0.6136363636363636,without hill-valley
+california,2,0.6744186046511628,0.9772727272727273,1.0,without hill-valley
+california,3,0.9302325581395349,1.0,1.0,without hill-valley
+california,4,0.9767441860465116,1.0,1.0,without hill-valley
+california,5,1.0,1.0,1.0,without hill-valley
+climate-model-simulation-crashes,1,1.0,0.25,0.95,without hill-valley
+climate-model-simulation-crashes,2,1.0,1.0,1.0,without hill-valley
+climate-model-simulation-crashes,3,1.0,1.0,1.0,without hill-valley
+climate-model-simulation-crashes,4,1.0,1.0,1.0,without hill-valley
+climate-model-simulation-crashes,5,1.0,1.0,1.0,without hill-valley
+codrna,1,0.2708333333333333,0.34,0.74,without hill-valley
+codrna,2,0.625,0.96,1.0,without hill-valley
+codrna,3,0.9583333333333334,1.0,1.0,without hill-valley
+codrna,4,1.0,1.0,1.0,without hill-valley
+codrna,5,1.0,1.0,1.0,without hill-valley
+covertype,1,0.325,0.9545454545454546,1.0,without hill-valley
+covertype,2,0.65,1.0,1.0,without hill-valley
+covertype,3,0.85,1.0,1.0,without hill-valley
+covertype,4,0.975,1.0,1.0,without hill-valley
+covertype,5,0.975,1.0,1.0,without hill-valley
+credit,1,0.2,0.025,0.14634146341463414,without hill-valley
+credit,2,0.625,0.2,0.3902439024390244,without hill-valley
+credit,3,0.85,0.9,0.7317073170731707,without hill-valley
+credit,4,0.95,1.0,0.975609756097561,without hill-valley
+credit,5,0.975,1.0,1.0,without hill-valley
+creditcard,1,1.0,0.5517241379310345,0.6296296296296297,without hill-valley
+creditcard,2,1.0,0.9310344827586207,1.0,without hill-valley
+creditcard,3,1.0,1.0,1.0,without hill-valley
+creditcard,4,1.0,1.0,1.0,without hill-valley
+creditcard,5,1.0,1.0,1.0,without hill-valley
+delta_ailerons,1,0.19148936170212766,0.08163265306122448,0.0,without hill-valley
+delta_ailerons,2,0.44680851063829785,0.20408163265306123,0.23404255319148937,without hill-valley
+delta_ailerons,3,0.6808510638297872,0.7755102040816326,0.8297872340425532,without hill-valley
+delta_ailerons,4,0.8723404255319149,1.0,1.0,without hill-valley
+delta_ailerons,5,0.9787234042553191,1.0,1.0,without hill-valley
+eeg-eye-state,1,0.4888888888888889,1.0,1.0,without hill-valley
+eeg-eye-state,2,0.9333333333333333,1.0,1.0,without hill-valley
+eeg-eye-state,3,0.9777777777777777,1.0,1.0,without hill-valley
+eeg-eye-state,4,1.0,1.0,1.0,without hill-valley
+eeg-eye-state,5,1.0,1.0,1.0,without hill-valley
+electrical_grid_stability,1,0.5869565217391305,0.7021276595744681,0.7291666666666666,without hill-valley
+electrical_grid_stability,2,0.9565217391304348,1.0,1.0,without hill-valley
+electrical_grid_stability,3,1.0,1.0,1.0,without hill-valley
+electrical_grid_stability,4,1.0,1.0,1.0,without hill-valley
+electrical_grid_stability,5,1.0,1.0,1.0,without hill-valley
+electricity,1,0.10256410256410256,0.5,0.8666666666666667,without hill-valley
+electricity,2,0.358974358974359,0.8,1.0,without hill-valley
+electricity,3,0.5897435897435898,0.95,1.0,without hill-valley
+electricity,4,0.7692307692307693,1.0,1.0,without hill-valley
+electricity,5,0.9230769230769231,1.0,1.0,without hill-valley
+elevators,1,0.35135135135135137,0.14285714285714285,0.2619047619047619,without hill-valley
+elevators,2,0.5675675675675675,0.47619047619047616,0.9285714285714286,without hill-valley
+elevators,3,0.8918918918918919,0.9761904761904762,1.0,without hill-valley
+elevators,4,0.9459459459459459,1.0,1.0,without hill-valley
+elevators,5,0.9459459459459459,1.0,1.0,without hill-valley
+hazelnut-spread-contaminant,1,0.5217391304347826,0.9791666666666666,1.0,without hill-valley
+hazelnut-spread-contaminant,2,0.9565217391304348,1.0,1.0,without hill-valley
+hazelnut-spread-contaminant,3,1.0,1.0,1.0,without hill-valley
+hazelnut-spread-contaminant,4,1.0,1.0,1.0,without hill-valley
+hazelnut-spread-contaminant,5,1.0,1.0,1.0,without hill-valley
+house_16H,1,0.3333333333333333,0.37777777777777777,0.6444444444444445,without hill-valley
+house_16H,2,0.8,0.9111111111111111,1.0,without hill-valley
+house_16H,3,0.9777777777777777,1.0,1.0,without hill-valley
+house_16H,4,1.0,1.0,1.0,without hill-valley
+house_16H,5,1.0,1.0,1.0,without hill-valley
+jannis,1,0.8125,0.71875,1.0,without hill-valley
+jannis,2,1.0,1.0,1.0,without hill-valley
+jannis,3,1.0,1.0,1.0,without hill-valley
+jannis,4,1.0,1.0,1.0,without hill-valley
+jannis,5,1.0,1.0,1.0,without hill-valley
+kin8nm,1,0.4318181818181818,0.6458333333333334,0.5319148936170213,without hill-valley
+kin8nm,2,0.75,0.9583333333333334,1.0,without hill-valley
+kin8nm,3,0.9772727272727273,1.0,1.0,without hill-valley
+kin8nm,4,1.0,1.0,1.0,without hill-valley
+kin8nm,5,1.0,1.0,1.0,without hill-valley
+mammography,1,0.42857142857142855,0.2,0.2894736842105263,without hill-valley
+mammography,2,0.7142857142857143,0.6285714285714286,0.6578947368421053,without hill-valley
+mammography,3,0.8571428571428571,0.8571428571428571,0.8421052631578947,without hill-valley
+mammography,4,0.8571428571428571,0.8571428571428571,0.868421052631579,without hill-valley
+mammography,5,0.8571428571428571,0.8571428571428571,0.868421052631579,without hill-valley
+ozone-level-8hr,1,0.6785714285714286,1.0,1.0,without hill-valley
+ozone-level-8hr,2,1.0,1.0,1.0,without hill-valley
+ozone-level-8hr,3,1.0,1.0,1.0,without hill-valley
+ozone-level-8hr,4,1.0,1.0,1.0,without hill-valley
+ozone-level-8hr,5,1.0,1.0,1.0,without hill-valley
+phoneme,1,0.22727272727272727,0.9767441860465116,0.9761904761904762,without hill-valley
+phoneme,2,0.4772727272727273,1.0,1.0,without hill-valley
+phoneme,3,0.8636363636363636,1.0,1.0,without hill-valley
+phoneme,4,0.9545454545454546,1.0,1.0,without hill-valley
+phoneme,5,1.0,1.0,1.0,without hill-valley
+polish_companies_bankruptcy,1,0.7105263157894737,0.6511627906976745,0.7021276595744681,without hill-valley
+polish_companies_bankruptcy,2,0.9736842105263158,0.9767441860465116,1.0,without hill-valley
+polish_companies_bankruptcy,3,1.0,1.0,1.0,without hill-valley
+polish_companies_bankruptcy,4,1.0,1.0,1.0,without hill-valley
+polish_companies_bankruptcy,5,1.0,1.0,1.0,without hill-valley
+puma8NH,1,0.4090909090909091,0.0,0.23809523809523808,without hill-valley
+puma8NH,2,0.75,0.023809523809523808,1.0,without hill-valley
+puma8NH,3,0.9772727272727273,0.11904761904761904,1.0,without hill-valley
+puma8NH,4,1.0,0.6190476190476191,1.0,without hill-valley
+puma8NH,5,1.0,0.9761904761904762,1.0,without hill-valley
+spambase,1,0.3958333333333333,0.723404255319149,0.7446808510638298,without hill-valley
+spambase,2,0.6458333333333334,0.8085106382978723,0.7872340425531915,without hill-valley
+spambase,3,0.875,0.8297872340425532,0.851063829787234,without hill-valley
+spambase,4,0.9166666666666666,0.851063829787234,0.8723404255319149,without hill-valley
+spambase,5,0.9166666666666666,0.9148936170212766,0.8723404255319149,without hill-valley
+stock,1,0.66,0.9183673469387755,0.5306122448979592,without hill-valley
+stock,2,0.96,1.0,1.0,without hill-valley
+stock,3,1.0,1.0,1.0,without hill-valley
+stock,4,1.0,1.0,1.0,without hill-valley
+stock,5,1.0,1.0,1.0,without hill-valley
+wdbc,1,1.0,0.42857142857142855,0.8958333333333334,without hill-valley
+wdbc,2,1.0,0.9795918367346939,1.0,without hill-valley
+wdbc,3,1.0,1.0,1.0,without hill-valley
+wdbc,4,1.0,1.0,1.0,without hill-valley
+wdbc,5,1.0,1.0,1.0,without hill-valley
+wilt,1,0.7333333333333333,0.0,0.021739130434782608,without hill-valley
+wilt,2,0.9777777777777777,0.1956521739130435,0.7391304347826086,without hill-valley
+wilt,3,1.0,0.9782608695652174,1.0,without hill-valley
+wilt,4,1.0,1.0,1.0,without hill-valley
+wilt,5,1.0,1.0,1.0,without hill-valley
+wine,1,0.3902439024390244,0.925,0.9230769230769231,without hill-valley
+wine,2,0.7073170731707317,0.925,0.9743589743589743,without hill-valley
+wine,3,0.926829268292683,0.95,0.9743589743589743,without hill-valley
+wine,4,0.975609756097561,1.0,1.0,without hill-valley
+wine,5,1.0,1.0,1.0,without hill-valley

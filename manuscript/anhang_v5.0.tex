@@ -1,0 +1,153 @@
+\providecommand{\nurde}[1]{#1}%
+\counterwithin{table}{section}
+\renewcommand{\thetable}{\Alph{section}\arabic{table}}
+\counterwithin{figure}{section}
+\renewcommand{\thefigure}{\Alph{section}\arabic{figure}}
+\newcommand{\tabelle}[2]{\begin{table}[H]\centering\scriptsize\caption{#2}\label{tab:#1}\input{#1}\end{table}}
+\newcommand{\tabelletfm}[2]{\begin{table}[H]\centering\scriptsize\caption{#2}\label{tab:#1}\input{#1_tfm}\end{table}}
+
+\section*{Conventions of the appendix}
+A target row is attacked if the model predicts it correctly without attack. Under attack it flips if the model then
+predicts it wrongly, and holds otherwise, at the number of poison rows $b$ of the column or table. Poison rows are exact
+copies of the target row with the wrong label, control rows the same copies with the true label. Every quantity is
+formed per dataset as the mean over its target rows from all five folds and then averaged over the datasets (Section~\ref{sec:statistik}).
+Last rows give mean $\pm$ SD over the datasets with a value, with fewer than five datasets the mean alone. A dash (--)
+marks an empty group. The ASR is the share of attacked target rows that flip. DS is the number of datasets behind a
+value, and higher/equal/lower counts the datasets on which a value lies above, at and below the reference. In
+Appendix~\ref{app:tests}, $p$ is two-sided and Holm-corrected per test over the five numbers of poison rows; all other
+tables are descriptive. Symbols as in Table~\ref{tab:masse}.
+
+\section{Data and performance without attack}\label{app:daten}\label{app:datensaetze}\label{app:guete}
+\noindent Two further candidates, \texttt{higgs} (OpenML 23512) and
+\texttt{numerai28.6} (OpenML 23517), were excluded because in a
+preliminary run both TFMs stayed clearly below an AUC of 0.8 on them,
+on \texttt{numerai28.6} close to chance (Section~\ref{sec:daten}).
+
+\noindent{\sloppy\input{app_klassen_text_tfm}\par}
+
+\noindent In \texttt{creditcard} each test fold holds a single row of the minority class, so its per-fold AUC rests on one positive case and the AUC criterion of Section~\ref{sec:daten} says little there. Without \texttt{creditcard}, the mean ASR of either TFM changes by at most \zOhneCreditMax\ at any number of poison rows.
+
+\begin{landscape}
+\tabelletfm{app_daten_guete}{The \zDS\ datasets. Rows: before the reduction to at most 3,000 rows; context: context size after it; minority: share of the smaller class; with duplicate: target rows with an exact copy carrying the true label in the clean context (most copies of one row in brackets). Per TFM without attack: the AUC on the test rows, mean over the five folds, and the number of correctly predicted, that is attacked, target rows. Last rows: mean $\pm$ SD of the AUC and sums of the target rows.}
+\end{landscape}
+
+\begin{landscape}
+\section{Effect of the attack}\label{app:asr}
+\subsection{ASR per dataset and number of poison rows}\label{app:asr_raster}
+\begin{table}[H]\centering\scriptsize\caption{ASR of the two TFMs per dataset and number of poison rows $b$. Last rows: mean $\pm$ SD, the number of datasets with ASR $\geq 0.5$ and $< 0.1$, the mean difference TabICL $-$ TabPFN and Spearman's $\rho$ of the two columns. At $b = 5$, \zICLhaltenFuenf\ (TabICL) and \zPFNhaltenFuenf\ (TabPFN) attacked target rows hold, \zICLhaltenDupFuenf\ and \zPFNhaltenDupFuenf\ of them with an exact duplicate carrying the true label (Table~\ref{tab:app_daten_guete}). Their $\pi_T$ rises with the number of duplicates: without one it is at most \zHaltenPiTOhneMax, with several hundred (\texttt{mammography}) at least \zHaltenPiTVielMin. With one poison row, none of the \zDupZiele\ target rows with a duplicate flips in either TFM; at $b = 5$, those that flip have at most \zDupGekipptFuenfMax\ duplicates.}\label{tab:app_asr_ds_b}\scalebox{0.93}{\parbox{\linewidth}{\input{app_asr_ds_b_tfm}}}\end{table}
+\end{landscape}
+\begin{landscape}
+\subsection{Control arm}\label{app:kontrolle}
+\tabelletfm{app_kontrolle_ds_b}{Control arm: of the target rows a TFM predicts wrongly without attack, the share that $b$ control rows correct. A dash marks datasets without such rows: \texttt{banknote} and \texttt{codrna} for both TFMs, \texttt{hill-valley} for TabPFN.}
+\end{landscape}
+\begin{landscape}
+\subsection{AUC of the remaining test rows}\label{app:ausserhalb_auc}
+\tabelle{app_b_dauc}{Change $\Delta$AUC of the AUC on the remaining test rows of the fold, predicted with the poisoned context of the target row, against the run without attack, per dataset and number of poison rows $b$; mean over the attacked target rows.}
+\end{landscape}
+\noindent\input{app_ausserhalb_text}
+
+\section{Inside TabICL}\label{app:icl}
+\noindent In every measurement and every ensemble member, $\cos(z, \mu_T)$ and $\cos(z, \mu_F)$ are positive (smallest values \zMcosTmin\ and \zMcosFmin), so $m$ is well defined and no member is left out of its mean. $m = 1$ means equal angle to both class centroids, not the midpoint between them.
+
+\begin{landscape}
+\subsection{Relative closeness \texorpdfstring{$m$}{m} under attack}\label{app:m_ds}
+\tabelle{app_m_liste_m}{TabICL, the relative closeness $m = \cos(z, \mu_F)/\cos(z, \mu_T)$ under attack, for the flipped and the held target rows, per dataset and number of poison rows $b$; the values behind Figure~\ref{fig:m_arme}.}
+\end{landscape}
+\begin{landscape}
+\subsection{Relative closeness \texorpdfstring{$m_0$}{m0} without attack}\label{app:m_liste_m0}
+\tabelle{app_m_liste_m0}{TabICL, $m_0$, the relative closeness without attack, of the target rows that flip and of those that hold under attack at $b$.}
+\end{landscape}
+\subsection{Flipped against held target rows}\label{app:m_gekippt_gehalten}
+\tabelle{app_m}{TabICL, flipped against held target rows: $m$ under attack, $m_0$ without attack and the push $m - m_0$, per $b$. Mean $\pm$ SD over the datasets with the group (DS flipped/held), and within the datasets that have both groups (pairs), how often the flipped are higher, equal or lower than the held. For the push also over all attacked target rows (all).}
+\begin{landscape}
+\subsection{The rule \texorpdfstring{$m > 1$}{m > 1}}\label{app:m_regel}
+\tabelle{app_m_liste_regel}{TabICL, the rule $m > 1$: the share of the flipped target rows with $m > 1$ and of the held ones with $m \leq 1$, per dataset and $b$.}
+\end{landscape}
+\subsection{Relative closeness \texorpdfstring{$m$}{m} and the decision within the dataset}\label{app:m_innen}
+\tabelle{app_m_liste_innen}{TabICL, the AUC with which $m$ separates the flipped from the held target rows within a dataset, per $b$.}
+\begin{landscape}
+\subsection{All attacked target rows: change under attack and control arm}\label{app:m}\label{app:m_null}
+\tabelle{app_d_alle}{TabICL, all attacked target rows of a dataset: $m_0$ and the share with $m_0 < 1$, the change $m - m_0$ under attack and $m$ in the control arm, per $b$.}
+\end{landscape}
+\begin{landscape}
+\subsection{Movement of the target row}\label{app:m_bewegung}
+\tabelle{app_d_zz}{TabICL, the movement of the target row: $\cos(z, z_0)$ between its embedding under and without attack (1: no movement), for the flipped and the held target rows and in the control arm, per dataset and $b$.}
+\end{landscape}
+\begin{landscape}
+\subsection{Movement of the class centroids}\label{app:m_zentroide}
+\tabelle{app_d_zentroide}{TabICL, the movement of the class centroids under attack: $\cos(\mu_T, \mu_{T,0})$ and $\cos(\mu_F, \mu_{F,0})$, mean over all attacked target rows, per dataset and $b$.}
+\end{landscape}
+
+\subsection{Neighbourhood of the target row}\label{app:kopp}
+\tabelle{app_kopp}{TabICL, the neighbourhood of the attacked target row under attack: $\nu_F$ counts the rows with the wrong label among its 25 nearest genuine context rows by cosine at the input of the MLP (copies left out), mean over the members; majority: $\nu_F > 12.5$. Per $b$: flipped target rows with and without such a majority, held ones with it, and the AUC of $\nu_F$ for flipped against held target rows (datasets with both groups).}
+
+\subsection{Neighbourhood of the target row per dataset}\label{app:kopp_ds}
+\tabelle{app_kopp_ds_icl}{TabICL at one poison row, per dataset: the mean of $\nu_F$ (Table~\ref{tab:app_kopp}) and the share of target rows with $\nu_F > 12.5$, without attack, under attack for the held and the flipped target rows, and in the control arm; $n$: number of target rows, summed in the last row.}
+
+\begin{landscape}
+\section{Inside TabPFN}\label{app:pfn}
+\subsection{The vote at one poison row}\label{app:pfn_b}
+\tabelle{app_e_vote_1}{TabPFN at one poison row, the vote per dataset as in Figure~\ref{fig:vote}, split into parts that sum to 1. Without attack: true label ($a_{T,0}$) and wrong label ($a_{F,0}$). Control arm: true label of genuine rows ($a_{T,G}$) and of control rows ($a_{T,C}$), wrong label ($a_{F,G}$). Under attack, for the flipped and the held target rows: true label ($a_T$), wrong label of genuine rows ($a_{F,G}$) and of poison rows ($a_{F,P}$), and $a_{F,0}$ of the same target rows without attack. $\pi_F = a_F$ holds per target row up to \zPFNidentMax.}
+\end{landscape}
+\begin{landscape}
+\subsection{The vote at two poison rows}\label{app:pfn_vote_2}
+\tabelle{app_e_vote_2}{TabPFN at two poison rows, as in Table~\ref{tab:app_e_vote_1}.}
+\end{landscape}
+\begin{landscape}
+\subsection{The vote at three poison rows}\label{app:pfn_vote_3}
+\tabelle{app_e_vote_3}{TabPFN at three poison rows, as in Table~\ref{tab:app_e_vote_1}.}
+\end{landscape}
+\begin{landscape}
+\subsection{The strongest row}\label{app:rang_pfn}
+\tabelle{app_e_staerkste}{TabPFN, the share of target rows for which one of the poison rows carries the largest weight in every ensemble member, for all attacked, the flipped and the held target rows, per dataset and $b$.}
+\end{landscape}
+\section{Tests}\label{app:tests}
+\noindent The tests of Table~\ref{tab:tests}, at every number of poison rows (Section~\ref{sec:statistik}). With Holm over all 25 tests instead, only test (3) at $b = 2$ changes, to $p = \zHolmGesamtAPZwei$.
+
+\begin{table}[H]
+\caption{The tests of the study. Each test is run at every number of poison rows $b$ from one to five, over the datasets that have target rows of the given group.}
+\label{tab:tests}
+\centering\scriptsize
+\maxbreite{\begin{tabular}{@{}lllll@{}}\toprule
+Test & Model & Quantity per dataset & Target rows & Comparison \\ \midrule
+(1a) & TabICL & share of flipped target rows & all attacked & attack arm against control arm \\
+(1b) & TabPFN & share of flipped target rows & all attacked & attack arm against control arm \\
+(2a) & TabICL & relative closeness $m$ & flipped & against 1 \\
+(2b) & TabICL & relative closeness $m$ & held & against 1 \\
+(3) & TabPFN & weight $a_{F,P}$ of the poison rows & flipped & against 0.5 \\
+\bottomrule\end{tabular}}
+\end{table}
+
+\begin{table}[H]
+\caption{Tests (1a) and (1b): per TFM the ASR under attack against the share of flipped target rows in the control arm, over the same attacked target rows, per $b$: means over the \zDS\ datasets, higher/equal/lower, and $p$ of the paired Wilcoxon signed-rank test over the datasets. Values per dataset in Table~\ref{tab:app_asr_ds_b}.}
+\label{tab:test_a}
+\input{tab_test_i_v5}
+\end{table}
+
+\begin{table}[H]
+\caption{Tests (2a) and (2b): TabICL, $m - 1$ for the flipped and for the held target rows, per $b$: mean over the datasets with the group (DS), higher/equal/lower than 0, and $p$ of the Wilcoxon signed-rank test of $m$ against 1. Values per dataset in Table~\ref{tab:app_m_liste_m}.}
+\label{tab:test_d}
+\input{tab_test_ii_v5}
+\end{table}
+
+\begin{table}[H]
+\caption{Test (3): TabPFN, $a_{F,P} - 0.5$, the weight of the poison rows at the flipped target rows minus one half, per $b$: mean over the datasets with flipped target rows (DS), higher/equal/lower than 0, and $p$ of the Wilcoxon signed-rank test of $a_{F,P}$ against 0.5. Of the flipped target rows, the poison rows alone receive more than half of the weight for \zPFNaPueberZielEins\,\% at $b = 1$ and \zPFNaPueberZielDrei\,\% at $b = 3$. Values per dataset for $b \leq 3$ in Tables~\ref{tab:app_e_vote_1} to~\ref{tab:app_e_vote_3}.}
+\label{tab:test_e}
+\input{tab_test_iii_v5}
+\end{table}
+
+\section{Trained models}\label{app:referenz}
+\noindent The random forest, CatBoost and the logistic regression are retrained on every context (Section~\ref{sec:modelle}). All three run at their defaults. CatBoost fits 1,000 trees of depth six with an L2 regularisation of 3, a learning rate set by the library and no early stopping. The random forest and the logistic regression use the defaults of scikit-learn: the random forest has 100 trees, each grown on a bootstrap sample until its leaves are pure, and the logistic regression has an L2 penalty with $C = 1$ and is fitted after mean imputation and standardisation on the context, with up to 5,000 iterations. Every fit converged. They are not part of the tests (Section~\ref{sec:statistik}).
+\subsection{Performance without attack}\label{app:trainiert_guete}
+\begin{table}[H]\centering\scriptsize\caption{The trained models without attack, per dataset: the AUC on the test rows, mean over the five folds, and the number of correctly predicted, that is attacked, target rows. Last rows: mean $\pm$ SD of the AUC and sums.}\label{tab:app_trainiert_guete}\maxbreite{\input{app_trainiert_guete}}\end{table}
+\begin{landscape}
+\subsection{ASR per dataset and number of poison rows}\label{app:trainiert_asr}
+\tabelle{app_trainiert_asr}{ASR of the trained models per dataset and number of poison rows $b$. Last rows: mean $\pm$ SD and the number of datasets with ASR $\geq 0.5$ and $< 0.1$. In the control arm no target row flips for any of the three models. At $b = 1$, \zRFhaltenEins\ target rows hold for the random forest, all with an exact duplicate carrying the true label, and the logistic regression changes $\pi_T$ by a median of \zLRdeltaPiEins. Spearman's $\rho$ of the CatBoost column with TabICL and TabPFN (Table~\ref{tab:app_asr_ds_b}): \zRhoCATICLEins\ and \zRhoCATPFNEins\ at $b = 1$, \zRhoCATICLZwei\ and \zRhoCATPFNZwei\ at $b = 2$, \zRhoCATICLDrei\ and \zRhoCATPFNDrei\ at $b = 3$.}
+\end{landscape}
+
+\section{Duplicate check}\label{app:dup}
+\tabelle{app_dup}{Duplicate check without attack, over every test row of a fold in its clean context (queries): the share whose context holds a row with exactly its features (alarm) and the share whose duplicates carry both labels. Under attack and in the control arm the check raises an alarm for every target row.}
+
+\section{Reproducibility}\label{app:repro}
+\tabelle{app_repro}{Packages and checkpoints from the run records, for the random forest and the logistic regression from the environment, since their result file keeps no run record. Cells: predictions of the target rows, eleven per target row. Fits: training runs of the trained models, one per target row, arm and number of poison rows, and one per fold without attack.}
+\noindent The models ran in two environments, because TabICL 2.1.1 and TabPFN 3.5 did not run with a common PyTorch build on the GPU of the study, an NVIDIA GB10. The repository lists every environment package by package. TabICL and CatBoost ran under Python 3.10, TabPFN, the random forest and the logistic regression under Python 3.11, all with scikit-learn 1.6.1, and the tests with SciPy 1.15.3 and statsmodels 0.14.6. Seeds: \texttt{random\_state} of every model 0, folds and the reduction to 3,000 rows 42, selection of the target rows 20240711. The rows to replace are drawn per target row from a random generator seeded with the index of that target row (Section~\ref{sec:aufbau}). Code and data are listed in the Declarations\nurde{ (Erklärungen)} at the end of the main text.

@@ -1,0 +1,751 @@
+model,dataset,b,ASR,n_attacked
+CatBoost,MagicTelescope,1,0.37777777777777777,45
+CatBoost,MiniBooNE,1,0.6170212765957447,47
+CatBoost,Pulsar-Dataset-HTRU2,1,0.5869565217391305,46
+CatBoost,banknote-authentication,1,0.94,50
+CatBoost,california,1,0.23255813953488372,43
+CatBoost,climate-model-simulation-crashes,1,1.0,37
+CatBoost,codrna,1,0.2708333333333333,48
+CatBoost,covertype,1,0.325,40
+CatBoost,credit,1,0.2,40
+CatBoost,creditcard,1,1.0,25
+CatBoost,delta_ailerons,1,0.19148936170212766,47
+CatBoost,eeg-eye-state,1,0.4888888888888889,45
+CatBoost,electrical_grid_stability,1,0.5869565217391305,46
+CatBoost,electricity,1,0.10256410256410256,39
+CatBoost,elevators,1,0.35135135135135137,37
+CatBoost,hazelnut-spread-contaminant,1,0.5217391304347826,46
+CatBoost,hill-valley,1,0.6666666666666666,30
+CatBoost,house_16H,1,0.3333333333333333,45
+CatBoost,jannis,1,0.8125,32
+CatBoost,kin8nm,1,0.4318181818181818,44
+CatBoost,mammography,1,0.42857142857142855,35
+CatBoost,ozone-level-8hr,1,0.6785714285714286,28
+CatBoost,phoneme,1,0.22727272727272727,44
+CatBoost,polish_companies_bankruptcy,1,0.7105263157894737,38
+CatBoost,puma8NH,1,0.4090909090909091,44
+CatBoost,spambase,1,0.3958333333333333,48
+CatBoost,stock,1,0.66,50
+CatBoost,wdbc,1,1.0,47
+CatBoost,wilt,1,0.7333333333333333,45
+CatBoost,wine,1,0.3902439024390244,41
+CatBoost,MagicTelescope,2,0.8,45
+CatBoost,MiniBooNE,2,1.0,47
+CatBoost,Pulsar-Dataset-HTRU2,2,0.9347826086956522,46
+CatBoost,banknote-authentication,2,0.94,50
+CatBoost,california,2,0.6744186046511628,43
+CatBoost,climate-model-simulation-crashes,2,1.0,37
+CatBoost,codrna,2,0.625,48
+CatBoost,covertype,2,0.65,40
+CatBoost,credit,2,0.625,40
+CatBoost,creditcard,2,1.0,25
+CatBoost,delta_ailerons,2,0.44680851063829785,47
+CatBoost,eeg-eye-state,2,0.9333333333333333,45
+CatBoost,electrical_grid_stability,2,0.9565217391304348,46
+CatBoost,electricity,2,0.358974358974359,39
+CatBoost,elevators,2,0.5675675675675675,37
+CatBoost,hazelnut-spread-contaminant,2,0.9565217391304348,46
+CatBoost,hill-valley,2,0.8,30
+CatBoost,house_16H,2,0.8,45
+CatBoost,jannis,2,1.0,32
+CatBoost,kin8nm,2,0.75,44
+CatBoost,mammography,2,0.7142857142857143,35
+CatBoost,ozone-level-8hr,2,1.0,28
+CatBoost,phoneme,2,0.4772727272727273,44
+CatBoost,polish_companies_bankruptcy,2,0.9736842105263158,38
+CatBoost,puma8NH,2,0.75,44
+CatBoost,spambase,2,0.6458333333333334,48
+CatBoost,stock,2,0.96,50
+CatBoost,wdbc,2,1.0,47
+CatBoost,wilt,2,0.9777777777777777,45
+CatBoost,wine,2,0.7073170731707317,41
+CatBoost,MagicTelescope,3,0.9555555555555556,45
+CatBoost,MiniBooNE,3,1.0,47
+CatBoost,Pulsar-Dataset-HTRU2,3,1.0,46
+CatBoost,banknote-authentication,3,0.94,50
+CatBoost,california,3,0.9302325581395349,43
+CatBoost,climate-model-simulation-crashes,3,1.0,37
+CatBoost,codrna,3,0.9583333333333334,48
+CatBoost,covertype,3,0.85,40
+CatBoost,credit,3,0.85,40
+CatBoost,creditcard,3,1.0,25
+CatBoost,delta_ailerons,3,0.6808510638297872,47
+CatBoost,eeg-eye-state,3,0.9777777777777777,45
+CatBoost,electrical_grid_stability,3,1.0,46
+CatBoost,electricity,3,0.5897435897435898,39
+CatBoost,elevators,3,0.8918918918918919,37
+CatBoost,hazelnut-spread-contaminant,3,1.0,46
+CatBoost,hill-valley,3,0.9333333333333333,30
+CatBoost,house_16H,3,0.9777777777777777,45
+CatBoost,jannis,3,1.0,32
+CatBoost,kin8nm,3,0.9772727272727273,44
+CatBoost,mammography,3,0.8571428571428571,35
+CatBoost,ozone-level-8hr,3,1.0,28
+CatBoost,phoneme,3,0.8636363636363636,44
+CatBoost,polish_companies_bankruptcy,3,1.0,38
+CatBoost,puma8NH,3,0.9772727272727273,44
+CatBoost,spambase,3,0.875,48
+CatBoost,stock,3,1.0,50
+CatBoost,wdbc,3,1.0,47
+CatBoost,wilt,3,1.0,45
+CatBoost,wine,3,0.926829268292683,41
+CatBoost,MagicTelescope,4,1.0,45
+CatBoost,MiniBooNE,4,1.0,47
+CatBoost,Pulsar-Dataset-HTRU2,4,1.0,46
+CatBoost,banknote-authentication,4,0.98,50
+CatBoost,california,4,0.9767441860465116,43
+CatBoost,climate-model-simulation-crashes,4,1.0,37
+CatBoost,codrna,4,1.0,48
+CatBoost,covertype,4,0.975,40
+CatBoost,credit,4,0.95,40
+CatBoost,creditcard,4,1.0,25
+CatBoost,delta_ailerons,4,0.8723404255319149,47
+CatBoost,eeg-eye-state,4,1.0,45
+CatBoost,electrical_grid_stability,4,1.0,46
+CatBoost,electricity,4,0.7692307692307693,39
+CatBoost,elevators,4,0.9459459459459459,37
+CatBoost,hazelnut-spread-contaminant,4,1.0,46
+CatBoost,hill-valley,4,1.0,30
+CatBoost,house_16H,4,1.0,45
+CatBoost,jannis,4,1.0,32
+CatBoost,kin8nm,4,1.0,44
+CatBoost,mammography,4,0.8571428571428571,35
+CatBoost,ozone-level-8hr,4,1.0,28
+CatBoost,phoneme,4,0.9545454545454546,44
+CatBoost,polish_companies_bankruptcy,4,1.0,38
+CatBoost,puma8NH,4,1.0,44
+CatBoost,spambase,4,0.9166666666666666,48
+CatBoost,stock,4,1.0,50
+CatBoost,wdbc,4,1.0,47
+CatBoost,wilt,4,1.0,45
+CatBoost,wine,4,0.975609756097561,41
+CatBoost,MagicTelescope,5,1.0,45
+CatBoost,MiniBooNE,5,1.0,47
+CatBoost,Pulsar-Dataset-HTRU2,5,1.0,46
+CatBoost,banknote-authentication,5,1.0,50
+CatBoost,california,5,1.0,43
+CatBoost,climate-model-simulation-crashes,5,1.0,37
+CatBoost,codrna,5,1.0,48
+CatBoost,covertype,5,0.975,40
+CatBoost,credit,5,0.975,40
+CatBoost,creditcard,5,1.0,25
+CatBoost,delta_ailerons,5,0.9787234042553191,47
+CatBoost,eeg-eye-state,5,1.0,45
+CatBoost,electrical_grid_stability,5,1.0,46
+CatBoost,electricity,5,0.9230769230769231,39
+CatBoost,elevators,5,0.9459459459459459,37
+CatBoost,hazelnut-spread-contaminant,5,1.0,46
+CatBoost,hill-valley,5,1.0,30
+CatBoost,house_16H,5,1.0,45
+CatBoost,jannis,5,1.0,32
+CatBoost,kin8nm,5,1.0,44
+CatBoost,mammography,5,0.8571428571428571,35
+CatBoost,ozone-level-8hr,5,1.0,28
+CatBoost,phoneme,5,1.0,44
+CatBoost,polish_companies_bankruptcy,5,1.0,38
+CatBoost,puma8NH,5,1.0,44
+CatBoost,spambase,5,0.9166666666666666,48
+CatBoost,stock,5,1.0,50
+CatBoost,wdbc,5,1.0,47
+CatBoost,wilt,5,1.0,45
+CatBoost,wine,5,1.0,41
+Logistic regression,MagicTelescope,1,0.0,41
+Logistic regression,MiniBooNE,1,0.0425531914893617,47
+Logistic regression,Pulsar-Dataset-HTRU2,1,0.0,46
+Logistic regression,banknote-authentication,1,0.0,47
+Logistic regression,california,1,0.0,42
+Logistic regression,climate-model-simulation-crashes,1,0.05,40
+Logistic regression,codrna,1,0.0,49
+Logistic regression,covertype,1,0.0,33
+Logistic regression,credit,1,0.02702702702702703,37
+Logistic regression,creditcard,1,0.04,25
+Logistic regression,delta_ailerons,1,0.021739130434782608,46
+Logistic regression,eeg-eye-state,1,0.07407407407407407,27
+Logistic regression,electrical_grid_stability,1,0.0,37
+Logistic regression,electricity,1,0.0,40
+Logistic regression,elevators,1,0.023255813953488372,43
+Logistic regression,hazelnut-spread-contaminant,1,0.021739130434782608,46
+Logistic regression,hill-valley,1,0.058823529411764705,34
+Logistic regression,house_16H,1,0.0,43
+Logistic regression,jannis,1,0.027777777777777776,36
+Logistic regression,kin8nm,1,0.0,35
+Logistic regression,mammography,1,0.03125,32
+Logistic regression,ozone-level-8hr,1,0.03571428571428571,28
+Logistic regression,phoneme,1,0.0,36
+Logistic regression,polish_companies_bankruptcy,1,0.034482758620689655,29
+Logistic regression,puma8NH,1,0.0,42
+Logistic regression,spambase,1,0.043478260869565216,46
+Logistic regression,stock,1,0.0,39
+Logistic regression,wdbc,1,0.02127659574468085,47
+Logistic regression,wilt,1,0.0,27
+Logistic regression,wine,1,0.0,39
+Logistic regression,MagicTelescope,2,0.0,41
+Logistic regression,MiniBooNE,2,0.0425531914893617,47
+Logistic regression,Pulsar-Dataset-HTRU2,2,0.0,46
+Logistic regression,banknote-authentication,2,0.0,47
+Logistic regression,california,2,0.0,42
+Logistic regression,climate-model-simulation-crashes,2,0.125,40
+Logistic regression,codrna,2,0.0,49
+Logistic regression,covertype,2,0.0,33
+Logistic regression,credit,2,0.02702702702702703,37
+Logistic regression,creditcard,2,0.12,25
+Logistic regression,delta_ailerons,2,0.021739130434782608,46
+Logistic regression,eeg-eye-state,2,0.07407407407407407,27
+Logistic regression,electrical_grid_stability,2,0.0,37
+Logistic regression,electricity,2,0.0,40
+Logistic regression,elevators,2,0.046511627906976744,43
+Logistic regression,hazelnut-spread-contaminant,2,0.021739130434782608,46
+Logistic regression,hill-valley,2,0.08823529411764706,34
+Logistic regression,house_16H,2,0.0,43
+Logistic regression,jannis,2,0.1388888888888889,36
+Logistic regression,kin8nm,2,0.0,35
+Logistic regression,mammography,2,0.03125,32
+Logistic regression,ozone-level-8hr,2,0.14285714285714285,28
+Logistic regression,phoneme,2,0.0,36
+Logistic regression,polish_companies_bankruptcy,2,0.034482758620689655,29
+Logistic regression,puma8NH,2,0.0,42
+Logistic regression,spambase,2,0.043478260869565216,46
+Logistic regression,stock,2,0.0,39
+Logistic regression,wdbc,2,0.0425531914893617,47
+Logistic regression,wilt,2,0.0,27
+Logistic regression,wine,2,0.0,39
+Logistic regression,MagicTelescope,3,0.0,41
+Logistic regression,MiniBooNE,3,0.0425531914893617,47
+Logistic regression,Pulsar-Dataset-HTRU2,3,0.0,46
+Logistic regression,banknote-authentication,3,0.0,47
+Logistic regression,california,3,0.0,42
+Logistic regression,climate-model-simulation-crashes,3,0.175,40
+Logistic regression,codrna,3,0.0,49
+Logistic regression,covertype,3,0.030303030303030304,33
+Logistic regression,credit,3,0.02702702702702703,37
+Logistic regression,creditcard,3,0.28,25
+Logistic regression,delta_ailerons,3,0.021739130434782608,46
+Logistic regression,eeg-eye-state,3,0.07407407407407407,27
+Logistic regression,electrical_grid_stability,3,0.0,37
+Logistic regression,electricity,3,0.0,40
+Logistic regression,elevators,3,0.046511627906976744,43
+Logistic regression,hazelnut-spread-contaminant,3,0.021739130434782608,46
+Logistic regression,hill-valley,3,0.11764705882352941,34
+Logistic regression,house_16H,3,0.0,43
+Logistic regression,jannis,3,0.1388888888888889,36
+Logistic regression,kin8nm,3,0.0,35
+Logistic regression,mammography,3,0.03125,32
+Logistic regression,ozone-level-8hr,3,0.14285714285714285,28
+Logistic regression,phoneme,3,0.0,36
+Logistic regression,polish_companies_bankruptcy,3,0.034482758620689655,29
+Logistic regression,puma8NH,3,0.0,42
+Logistic regression,spambase,3,0.043478260869565216,46
+Logistic regression,stock,3,0.02564102564102564,39
+Logistic regression,wdbc,3,0.10638297872340426,47
+Logistic regression,wilt,3,0.0,27
+Logistic regression,wine,3,0.0,39
+Logistic regression,MagicTelescope,4,0.0,41
+Logistic regression,MiniBooNE,4,0.0425531914893617,47
+Logistic regression,Pulsar-Dataset-HTRU2,4,0.0,46
+Logistic regression,banknote-authentication,4,0.0,47
+Logistic regression,california,4,0.0,42
+Logistic regression,climate-model-simulation-crashes,4,0.3,40
+Logistic regression,codrna,4,0.0,49
+Logistic regression,covertype,4,0.030303030303030304,33
+Logistic regression,credit,4,0.05405405405405406,37
+Logistic regression,creditcard,4,0.48,25
+Logistic regression,delta_ailerons,4,0.021739130434782608,46
+Logistic regression,eeg-eye-state,4,0.07407407407407407,27
+Logistic regression,electrical_grid_stability,4,0.0,37
+Logistic regression,electricity,4,0.0,40
+Logistic regression,elevators,4,0.046511627906976744,43
+Logistic regression,hazelnut-spread-contaminant,4,0.021739130434782608,46
+Logistic regression,hill-valley,4,0.20588235294117646,34
+Logistic regression,house_16H,4,0.0,43
+Logistic regression,jannis,4,0.16666666666666666,36
+Logistic regression,kin8nm,4,0.0,35
+Logistic regression,mammography,4,0.03125,32
+Logistic regression,ozone-level-8hr,4,0.2857142857142857,28
+Logistic regression,phoneme,4,0.0,36
+Logistic regression,polish_companies_bankruptcy,4,0.06896551724137931,29
+Logistic regression,puma8NH,4,0.0,42
+Logistic regression,spambase,4,0.10869565217391304,46
+Logistic regression,stock,4,0.02564102564102564,39
+Logistic regression,wdbc,4,0.19148936170212766,47
+Logistic regression,wilt,4,0.0,27
+Logistic regression,wine,4,0.0,39
+Logistic regression,MagicTelescope,5,0.0,41
+Logistic regression,MiniBooNE,5,0.0425531914893617,47
+Logistic regression,Pulsar-Dataset-HTRU2,5,0.0,46
+Logistic regression,banknote-authentication,5,0.0,47
+Logistic regression,california,5,0.023809523809523808,42
+Logistic regression,climate-model-simulation-crashes,5,0.35,40
+Logistic regression,codrna,5,0.0,49
+Logistic regression,covertype,5,0.030303030303030304,33
+Logistic regression,credit,5,0.05405405405405406,37
+Logistic regression,creditcard,5,0.56,25
+Logistic regression,delta_ailerons,5,0.021739130434782608,46
+Logistic regression,eeg-eye-state,5,0.07407407407407407,27
+Logistic regression,electrical_grid_stability,5,0.0,37
+Logistic regression,electricity,5,0.0,40
+Logistic regression,elevators,5,0.046511627906976744,43
+Logistic regression,hazelnut-spread-contaminant,5,0.021739130434782608,46
+Logistic regression,hill-valley,5,0.23529411764705882,34
+Logistic regression,house_16H,5,0.0,43
+Logistic regression,jannis,5,0.2222222222222222,36
+Logistic regression,kin8nm,5,0.0,35
+Logistic regression,mammography,5,0.0625,32
+Logistic regression,ozone-level-8hr,5,0.32142857142857145,28
+Logistic regression,phoneme,5,0.0,36
+Logistic regression,polish_companies_bankruptcy,5,0.06896551724137931,29
+Logistic regression,puma8NH,5,0.0,42
+Logistic regression,spambase,5,0.10869565217391304,46
+Logistic regression,stock,5,0.05128205128205128,39
+Logistic regression,wdbc,5,0.2553191489361702,47
+Logistic regression,wilt,5,0.0,27
+Logistic regression,wine,5,0.0,39
+Random forest,MagicTelescope,1,1.0,44
+Random forest,MiniBooNE,1,1.0,47
+Random forest,Pulsar-Dataset-HTRU2,1,1.0,46
+Random forest,banknote-authentication,1,0.94,50
+Random forest,california,1,1.0,44
+Random forest,climate-model-simulation-crashes,1,1.0,31
+Random forest,codrna,1,1.0,47
+Random forest,covertype,1,1.0,42
+Random forest,credit,1,1.0,43
+Random forest,creditcard,1,1.0,25
+Random forest,delta_ailerons,1,1.0,48
+Random forest,eeg-eye-state,1,1.0,45
+Random forest,electrical_grid_stability,1,1.0,42
+Random forest,electricity,1,1.0,41
+Random forest,elevators,1,1.0,36
+Random forest,hazelnut-spread-contaminant,1,1.0,47
+Random forest,hill-valley,1,1.0,23
+Random forest,house_16H,1,1.0,45
+Random forest,jannis,1,1.0,34
+Random forest,kin8nm,1,1.0,44
+Random forest,mammography,1,0.8611111111111112,36
+Random forest,ozone-level-8hr,1,1.0,29
+Random forest,phoneme,1,1.0,43
+Random forest,polish_companies_bankruptcy,1,1.0,35
+Random forest,puma8NH,1,1.0,43
+Random forest,spambase,1,0.8695652173913043,46
+Random forest,stock,1,1.0,50
+Random forest,wdbc,1,1.0,47
+Random forest,wilt,1,1.0,44
+Random forest,wine,1,0.9473684210526315,38
+Random forest,MagicTelescope,2,1.0,44
+Random forest,MiniBooNE,2,1.0,47
+Random forest,Pulsar-Dataset-HTRU2,2,1.0,46
+Random forest,banknote-authentication,2,0.94,50
+Random forest,california,2,1.0,44
+Random forest,climate-model-simulation-crashes,2,1.0,31
+Random forest,codrna,2,1.0,47
+Random forest,covertype,2,1.0,42
+Random forest,credit,2,1.0,43
+Random forest,creditcard,2,1.0,25
+Random forest,delta_ailerons,2,1.0,48
+Random forest,eeg-eye-state,2,1.0,45
+Random forest,electrical_grid_stability,2,1.0,42
+Random forest,electricity,2,1.0,41
+Random forest,elevators,2,1.0,36
+Random forest,hazelnut-spread-contaminant,2,1.0,47
+Random forest,hill-valley,2,1.0,23
+Random forest,house_16H,2,1.0,45
+Random forest,jannis,2,1.0,34
+Random forest,kin8nm,2,1.0,44
+Random forest,mammography,2,0.8611111111111112,36
+Random forest,ozone-level-8hr,2,1.0,29
+Random forest,phoneme,2,1.0,43
+Random forest,polish_companies_bankruptcy,2,1.0,35
+Random forest,puma8NH,2,1.0,43
+Random forest,spambase,2,0.9130434782608695,46
+Random forest,stock,2,1.0,50
+Random forest,wdbc,2,1.0,47
+Random forest,wilt,2,1.0,44
+Random forest,wine,2,0.9736842105263158,38
+Random forest,MagicTelescope,3,1.0,44
+Random forest,MiniBooNE,3,1.0,47
+Random forest,Pulsar-Dataset-HTRU2,3,1.0,46
+Random forest,banknote-authentication,3,0.98,50
+Random forest,california,3,1.0,44
+Random forest,climate-model-simulation-crashes,3,1.0,31
+Random forest,codrna,3,1.0,47
+Random forest,covertype,3,1.0,42
+Random forest,credit,3,1.0,43
+Random forest,creditcard,3,1.0,25
+Random forest,delta_ailerons,3,1.0,48
+Random forest,eeg-eye-state,3,1.0,45
+Random forest,electrical_grid_stability,3,1.0,42
+Random forest,electricity,3,1.0,41
+Random forest,elevators,3,1.0,36
+Random forest,hazelnut-spread-contaminant,3,1.0,47
+Random forest,hill-valley,3,1.0,23
+Random forest,house_16H,3,1.0,45
+Random forest,jannis,3,1.0,34
+Random forest,kin8nm,3,1.0,44
+Random forest,mammography,3,0.8611111111111112,36
+Random forest,ozone-level-8hr,3,1.0,29
+Random forest,phoneme,3,1.0,43
+Random forest,polish_companies_bankruptcy,3,1.0,35
+Random forest,puma8NH,3,1.0,43
+Random forest,spambase,3,0.9130434782608695,46
+Random forest,stock,3,1.0,50
+Random forest,wdbc,3,1.0,47
+Random forest,wilt,3,1.0,44
+Random forest,wine,3,1.0,38
+Random forest,MagicTelescope,4,1.0,44
+Random forest,MiniBooNE,4,1.0,47
+Random forest,Pulsar-Dataset-HTRU2,4,1.0,46
+Random forest,banknote-authentication,4,1.0,50
+Random forest,california,4,1.0,44
+Random forest,climate-model-simulation-crashes,4,1.0,31
+Random forest,codrna,4,1.0,47
+Random forest,covertype,4,1.0,42
+Random forest,credit,4,1.0,43
+Random forest,creditcard,4,1.0,25
+Random forest,delta_ailerons,4,1.0,48
+Random forest,eeg-eye-state,4,1.0,45
+Random forest,electrical_grid_stability,4,1.0,42
+Random forest,electricity,4,1.0,41
+Random forest,elevators,4,1.0,36
+Random forest,hazelnut-spread-contaminant,4,1.0,47
+Random forest,hill-valley,4,1.0,23
+Random forest,house_16H,4,1.0,45
+Random forest,jannis,4,1.0,34
+Random forest,kin8nm,4,1.0,44
+Random forest,mammography,4,0.8611111111111112,36
+Random forest,ozone-level-8hr,4,1.0,29
+Random forest,phoneme,4,1.0,43
+Random forest,polish_companies_bankruptcy,4,1.0,35
+Random forest,puma8NH,4,1.0,43
+Random forest,spambase,4,0.9130434782608695,46
+Random forest,stock,4,1.0,50
+Random forest,wdbc,4,1.0,47
+Random forest,wilt,4,1.0,44
+Random forest,wine,4,1.0,38
+Random forest,MagicTelescope,5,1.0,44
+Random forest,MiniBooNE,5,1.0,47
+Random forest,Pulsar-Dataset-HTRU2,5,1.0,46
+Random forest,banknote-authentication,5,1.0,50
+Random forest,california,5,1.0,44
+Random forest,climate-model-simulation-crashes,5,1.0,31
+Random forest,codrna,5,1.0,47
+Random forest,covertype,5,1.0,42
+Random forest,credit,5,1.0,43
+Random forest,creditcard,5,1.0,25
+Random forest,delta_ailerons,5,1.0,48
+Random forest,eeg-eye-state,5,1.0,45
+Random forest,electrical_grid_stability,5,1.0,42
+Random forest,electricity,5,1.0,41
+Random forest,elevators,5,1.0,36
+Random forest,hazelnut-spread-contaminant,5,1.0,47
+Random forest,hill-valley,5,1.0,23
+Random forest,house_16H,5,1.0,45
+Random forest,jannis,5,1.0,34
+Random forest,kin8nm,5,1.0,44
+Random forest,mammography,5,0.8611111111111112,36
+Random forest,ozone-level-8hr,5,1.0,29
+Random forest,phoneme,5,1.0,43
+Random forest,polish_companies_bankruptcy,5,1.0,35
+Random forest,puma8NH,5,1.0,43
+Random forest,spambase,5,0.9130434782608695,46
+Random forest,stock,5,1.0,50
+Random forest,wdbc,5,1.0,47
+Random forest,wilt,5,1.0,44
+Random forest,wine,5,1.0,38
+TabICL,MagicTelescope,1,0.2553191489361702,47
+TabICL,MiniBooNE,1,0.9111111111111111,45
+TabICL,Pulsar-Dataset-HTRU2,1,0.0,46
+TabICL,banknote-authentication,1,0.42,50
+TabICL,california,1,0.5909090909090909,44
+TabICL,climate-model-simulation-crashes,1,0.25,40
+TabICL,codrna,1,0.34,50
+TabICL,covertype,1,0.9545454545454546,44
+TabICL,credit,1,0.025,40
+TabICL,creditcard,1,0.5517241379310345,29
+TabICL,delta_ailerons,1,0.08163265306122448,49
+TabICL,eeg-eye-state,1,1.0,49
+TabICL,electrical_grid_stability,1,0.7021276595744681,47
+TabICL,electricity,1,0.5,40
+TabICL,elevators,1,0.14285714285714285,42
+TabICL,hazelnut-spread-contaminant,1,0.9791666666666666,48
+TabICL,hill-valley,1,0.6170212765957447,47
+TabICL,house_16H,1,0.37777777777777777,45
+TabICL,jannis,1,0.71875,32
+TabICL,kin8nm,1,0.6458333333333334,48
+TabICL,mammography,1,0.2,35
+TabICL,ozone-level-8hr,1,1.0,31
+TabICL,phoneme,1,0.9767441860465116,43
+TabICL,polish_companies_bankruptcy,1,0.6511627906976745,43
+TabICL,puma8NH,1,0.0,42
+TabICL,spambase,1,0.723404255319149,47
+TabICL,stock,1,0.9183673469387755,49
+TabICL,wdbc,1,0.42857142857142855,49
+TabICL,wilt,1,0.0,46
+TabICL,wine,1,0.925,40
+TabICL,MagicTelescope,2,0.7446808510638298,47
+TabICL,MiniBooNE,2,1.0,45
+TabICL,Pulsar-Dataset-HTRU2,2,0.2608695652173913,46
+TabICL,banknote-authentication,2,0.92,50
+TabICL,california,2,0.9772727272727273,44
+TabICL,climate-model-simulation-crashes,2,1.0,40
+TabICL,codrna,2,0.96,50
+TabICL,covertype,2,1.0,44
+TabICL,credit,2,0.2,40
+TabICL,creditcard,2,0.9310344827586207,29
+TabICL,delta_ailerons,2,0.20408163265306123,49
+TabICL,eeg-eye-state,2,1.0,49
+TabICL,electrical_grid_stability,2,1.0,47
+TabICL,electricity,2,0.8,40
+TabICL,elevators,2,0.47619047619047616,42
+TabICL,hazelnut-spread-contaminant,2,1.0,48
+TabICL,hill-valley,2,0.7659574468085106,47
+TabICL,house_16H,2,0.9111111111111111,45
+TabICL,jannis,2,1.0,32
+TabICL,kin8nm,2,0.9583333333333334,48
+TabICL,mammography,2,0.6285714285714286,35
+TabICL,ozone-level-8hr,2,1.0,31
+TabICL,phoneme,2,1.0,43
+TabICL,polish_companies_bankruptcy,2,0.9767441860465116,43
+TabICL,puma8NH,2,0.023809523809523808,42
+TabICL,spambase,2,0.8085106382978723,47
+TabICL,stock,2,1.0,49
+TabICL,wdbc,2,0.9795918367346939,49
+TabICL,wilt,2,0.1956521739130435,46
+TabICL,wine,2,0.925,40
+TabICL,MagicTelescope,3,1.0,47
+TabICL,MiniBooNE,3,1.0,45
+TabICL,Pulsar-Dataset-HTRU2,3,1.0,46
+TabICL,banknote-authentication,3,0.94,50
+TabICL,california,3,1.0,44
+TabICL,climate-model-simulation-crashes,3,1.0,40
+TabICL,codrna,3,1.0,50
+TabICL,covertype,3,1.0,44
+TabICL,credit,3,0.9,40
+TabICL,creditcard,3,1.0,29
+TabICL,delta_ailerons,3,0.7755102040816326,49
+TabICL,eeg-eye-state,3,1.0,49
+TabICL,electrical_grid_stability,3,1.0,47
+TabICL,electricity,3,0.95,40
+TabICL,elevators,3,0.9761904761904762,42
+TabICL,hazelnut-spread-contaminant,3,1.0,48
+TabICL,hill-valley,3,0.9361702127659575,47
+TabICL,house_16H,3,1.0,45
+TabICL,jannis,3,1.0,32
+TabICL,kin8nm,3,1.0,48
+TabICL,mammography,3,0.8571428571428571,35
+TabICL,ozone-level-8hr,3,1.0,31
+TabICL,phoneme,3,1.0,43
+TabICL,polish_companies_bankruptcy,3,1.0,43
+TabICL,puma8NH,3,0.11904761904761904,42
+TabICL,spambase,3,0.8297872340425532,47
+TabICL,stock,3,1.0,49
+TabICL,wdbc,3,1.0,49
+TabICL,wilt,3,0.9782608695652174,46
+TabICL,wine,3,0.95,40
+TabICL,MagicTelescope,4,1.0,47
+TabICL,MiniBooNE,4,1.0,45
+TabICL,Pulsar-Dataset-HTRU2,4,1.0,46
+TabICL,banknote-authentication,4,0.94,50
+TabICL,california,4,1.0,44
+TabICL,climate-model-simulation-crashes,4,1.0,40
+TabICL,codrna,4,1.0,50
+TabICL,covertype,4,1.0,44
+TabICL,credit,4,1.0,40
+TabICL,creditcard,4,1.0,29
+TabICL,delta_ailerons,4,1.0,49
+TabICL,eeg-eye-state,4,1.0,49
+TabICL,electrical_grid_stability,4,1.0,47
+TabICL,electricity,4,1.0,40
+TabICL,elevators,4,1.0,42
+TabICL,hazelnut-spread-contaminant,4,1.0,48
+TabICL,hill-valley,4,0.9574468085106383,47
+TabICL,house_16H,4,1.0,45
+TabICL,jannis,4,1.0,32
+TabICL,kin8nm,4,1.0,48
+TabICL,mammography,4,0.8571428571428571,35
+TabICL,ozone-level-8hr,4,1.0,31
+TabICL,phoneme,4,1.0,43
+TabICL,polish_companies_bankruptcy,4,1.0,43
+TabICL,puma8NH,4,0.6190476190476191,42
+TabICL,spambase,4,0.851063829787234,47
+TabICL,stock,4,1.0,49
+TabICL,wdbc,4,1.0,49
+TabICL,wilt,4,1.0,46
+TabICL,wine,4,1.0,40
+TabICL,MagicTelescope,5,1.0,47
+TabICL,MiniBooNE,5,1.0,45
+TabICL,Pulsar-Dataset-HTRU2,5,1.0,46
+TabICL,banknote-authentication,5,0.96,50
+TabICL,california,5,1.0,44
+TabICL,climate-model-simulation-crashes,5,1.0,40
+TabICL,codrna,5,1.0,50
+TabICL,covertype,5,1.0,44
+TabICL,credit,5,1.0,40
+TabICL,creditcard,5,1.0,29
+TabICL,delta_ailerons,5,1.0,49
+TabICL,eeg-eye-state,5,1.0,49
+TabICL,electrical_grid_stability,5,1.0,47
+TabICL,electricity,5,1.0,40
+TabICL,elevators,5,1.0,42
+TabICL,hazelnut-spread-contaminant,5,1.0,48
+TabICL,hill-valley,5,0.9574468085106383,47
+TabICL,house_16H,5,1.0,45
+TabICL,jannis,5,1.0,32
+TabICL,kin8nm,5,1.0,48
+TabICL,mammography,5,0.8571428571428571,35
+TabICL,ozone-level-8hr,5,1.0,31
+TabICL,phoneme,5,1.0,43
+TabICL,polish_companies_bankruptcy,5,1.0,43
+TabICL,puma8NH,5,0.9761904761904762,42
+TabICL,spambase,5,0.9148936170212766,47
+TabICL,stock,5,1.0,49
+TabICL,wdbc,5,1.0,49
+TabICL,wilt,5,1.0,46
+TabICL,wine,5,1.0,40
+TabPFN,MagicTelescope,1,0.48936170212765956,47
+TabPFN,MiniBooNE,1,0.9347826086956522,46
+TabPFN,Pulsar-Dataset-HTRU2,1,0.0,46
+TabPFN,banknote-authentication,1,0.68,50
+TabPFN,california,1,0.6136363636363636,44
+TabPFN,climate-model-simulation-crashes,1,0.95,40
+TabPFN,codrna,1,0.74,50
+TabPFN,covertype,1,1.0,42
+TabPFN,credit,1,0.14634146341463414,41
+TabPFN,creditcard,1,0.6296296296296297,27
+TabPFN,delta_ailerons,1,0.0,47
+TabPFN,eeg-eye-state,1,1.0,49
+TabPFN,electrical_grid_stability,1,0.7291666666666666,48
+TabPFN,electricity,1,0.8666666666666667,45
+TabPFN,elevators,1,0.2619047619047619,42
+TabPFN,hazelnut-spread-contaminant,1,1.0,49
+TabPFN,hill-valley,1,0.98,50
+TabPFN,house_16H,1,0.6444444444444445,45
+TabPFN,jannis,1,1.0,32
+TabPFN,kin8nm,1,0.5319148936170213,47
+TabPFN,mammography,1,0.2894736842105263,38
+TabPFN,ozone-level-8hr,1,1.0,31
+TabPFN,phoneme,1,0.9761904761904762,42
+TabPFN,polish_companies_bankruptcy,1,0.7021276595744681,47
+TabPFN,puma8NH,1,0.23809523809523808,42
+TabPFN,spambase,1,0.7446808510638298,47
+TabPFN,stock,1,0.5306122448979592,49
+TabPFN,wdbc,1,0.8958333333333334,48
+TabPFN,wilt,1,0.021739130434782608,46
+TabPFN,wine,1,0.9230769230769231,39
+TabPFN,MagicTelescope,2,0.8723404255319149,47
+TabPFN,MiniBooNE,2,1.0,46
+TabPFN,Pulsar-Dataset-HTRU2,2,0.5869565217391305,46
+TabPFN,banknote-authentication,2,0.92,50
+TabPFN,california,2,1.0,44
+TabPFN,climate-model-simulation-crashes,2,1.0,40
+TabPFN,codrna,2,1.0,50
+TabPFN,covertype,2,1.0,42
+TabPFN,credit,2,0.3902439024390244,41
+TabPFN,creditcard,2,1.0,27
+TabPFN,delta_ailerons,2,0.23404255319148937,47
+TabPFN,eeg-eye-state,2,1.0,49
+TabPFN,electrical_grid_stability,2,1.0,48
+TabPFN,electricity,2,1.0,45
+TabPFN,elevators,2,0.9285714285714286,42
+TabPFN,hazelnut-spread-contaminant,2,1.0,49
+TabPFN,hill-valley,2,1.0,50
+TabPFN,house_16H,2,1.0,45
+TabPFN,jannis,2,1.0,32
+TabPFN,kin8nm,2,1.0,47
+TabPFN,mammography,2,0.6578947368421053,38
+TabPFN,ozone-level-8hr,2,1.0,31
+TabPFN,phoneme,2,1.0,42
+TabPFN,polish_companies_bankruptcy,2,1.0,47
+TabPFN,puma8NH,2,1.0,42
+TabPFN,spambase,2,0.7872340425531915,47
+TabPFN,stock,2,1.0,49
+TabPFN,wdbc,2,1.0,48
+TabPFN,wilt,2,0.7391304347826086,46
+TabPFN,wine,2,0.9743589743589743,39
+TabPFN,MagicTelescope,3,1.0,47
+TabPFN,MiniBooNE,3,1.0,46
+TabPFN,Pulsar-Dataset-HTRU2,3,1.0,46
+TabPFN,banknote-authentication,3,0.94,50
+TabPFN,california,3,1.0,44
+TabPFN,climate-model-simulation-crashes,3,1.0,40
+TabPFN,codrna,3,1.0,50
+TabPFN,covertype,3,1.0,42
+TabPFN,credit,3,0.7317073170731707,41
+TabPFN,creditcard,3,1.0,27
+TabPFN,delta_ailerons,3,0.8297872340425532,47
+TabPFN,eeg-eye-state,3,1.0,49
+TabPFN,electrical_grid_stability,3,1.0,48
+TabPFN,electricity,3,1.0,45
+TabPFN,elevators,3,1.0,42
+TabPFN,hazelnut-spread-contaminant,3,1.0,49
+TabPFN,hill-valley,3,1.0,50
+TabPFN,house_16H,3,1.0,45
+TabPFN,jannis,3,1.0,32
+TabPFN,kin8nm,3,1.0,47
+TabPFN,mammography,3,0.8421052631578947,38
+TabPFN,ozone-level-8hr,3,1.0,31
+TabPFN,phoneme,3,1.0,42
+TabPFN,polish_companies_bankruptcy,3,1.0,47
+TabPFN,puma8NH,3,1.0,42
+TabPFN,spambase,3,0.851063829787234,47
+TabPFN,stock,3,1.0,49
+TabPFN,wdbc,3,1.0,48
+TabPFN,wilt,3,1.0,46
+TabPFN,wine,3,0.9743589743589743,39
+TabPFN,MagicTelescope,4,1.0,47
+TabPFN,MiniBooNE,4,1.0,46
+TabPFN,Pulsar-Dataset-HTRU2,4,1.0,46
+TabPFN,banknote-authentication,4,0.94,50
+TabPFN,california,4,1.0,44
+TabPFN,climate-model-simulation-crashes,4,1.0,40
+TabPFN,codrna,4,1.0,50
+TabPFN,covertype,4,1.0,42
+TabPFN,credit,4,0.975609756097561,41
+TabPFN,creditcard,4,1.0,27
+TabPFN,delta_ailerons,4,1.0,47
+TabPFN,eeg-eye-state,4,1.0,49
+TabPFN,electrical_grid_stability,4,1.0,48
+TabPFN,electricity,4,1.0,45
+TabPFN,elevators,4,1.0,42
+TabPFN,hazelnut-spread-contaminant,4,1.0,49
+TabPFN,hill-valley,4,1.0,50
+TabPFN,house_16H,4,1.0,45
+TabPFN,jannis,4,1.0,32
+TabPFN,kin8nm,4,1.0,47
+TabPFN,mammography,4,0.868421052631579,38
+TabPFN,ozone-level-8hr,4,1.0,31
+TabPFN,phoneme,4,1.0,42
+TabPFN,polish_companies_bankruptcy,4,1.0,47
+TabPFN,puma8NH,4,1.0,42
+TabPFN,spambase,4,0.8723404255319149,47
+TabPFN,stock,4,1.0,49
+TabPFN,wdbc,4,1.0,48
+TabPFN,wilt,4,1.0,46
+TabPFN,wine,4,1.0,39
+TabPFN,MagicTelescope,5,1.0,47
+TabPFN,MiniBooNE,5,1.0,46
+TabPFN,Pulsar-Dataset-HTRU2,5,1.0,46
+TabPFN,banknote-authentication,5,0.98,50
+TabPFN,california,5,1.0,44
+TabPFN,climate-model-simulation-crashes,5,1.0,40
+TabPFN,codrna,5,1.0,50
+TabPFN,covertype,5,1.0,42
+TabPFN,credit,5,1.0,41
+TabPFN,creditcard,5,1.0,27
+TabPFN,delta_ailerons,5,1.0,47
+TabPFN,eeg-eye-state,5,1.0,49
+TabPFN,electrical_grid_stability,5,1.0,48
+TabPFN,electricity,5,1.0,45
+TabPFN,elevators,5,1.0,42
+TabPFN,hazelnut-spread-contaminant,5,1.0,49
+TabPFN,hill-valley,5,1.0,50
+TabPFN,house_16H,5,1.0,45
+TabPFN,jannis,5,1.0,32
+TabPFN,kin8nm,5,1.0,47
+TabPFN,mammography,5,0.868421052631579,38
+TabPFN,ozone-level-8hr,5,1.0,31
+TabPFN,phoneme,5,1.0,42
+TabPFN,polish_companies_bankruptcy,5,1.0,47
+TabPFN,puma8NH,5,1.0,42
+TabPFN,spambase,5,0.8723404255319149,47
+TabPFN,stock,5,1.0,49
+TabPFN,wdbc,5,1.0,48
+TabPFN,wilt,5,1.0,46
+TabPFN,wine,5,1.0,39

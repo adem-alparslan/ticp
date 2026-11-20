@@ -1,0 +1,25 @@
+# large or generated things stay out of git; of data/ only the result files data/measurements.parquet and
+# data/reference_models.parquet are tracked
+cache
+data/*
+!data/measurements.parquet
+!data/reference_models.parquet
+__pycache__/
+*.aux
+*.log
+*.out
+*.bbl
+*.blg
+*.toc
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+# macOS
+.DS_Store
+# CatBoost writes its training log here
+catboost_info/
+# the zip of make_manuscript.py and the outputs of compiling manuscript/ by hand; manuscript.pdf is tracked
+manuscript.zip
+manuscript/ticp_alparslan_v5.0.pdf
+# a compiled manuscript must not end up among the generators
+paper/*.pdf

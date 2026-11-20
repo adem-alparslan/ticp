@@ -1,0 +1,6 @@
+model,package,checkpoint,torch,cells,fits,hours
+TabICL,2.1.1,tabicl-classifier-v2-20260212.ckpt,2.11.0.dev20260119+cu128,16280,,3.292777777777778
+TabPFN,9.1.0,tabpfn-v3.5-20260909.safetensors (TabPFNV3p5),2.10.0+cu130,16280,,4.892777777777778
+CatBoost,1.2.8,"defaults, no checkpoint",--,16280,14950.0,9.939722222222223
+Random forest,1.6.1,"defaults, no checkpoint",,16280,14950,
+Logistic regression,1.6.1,"defaults, no checkpoint",,16280,14950,

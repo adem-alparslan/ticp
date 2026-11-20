@@ -1,0 +1,49 @@
+# ------------------------------------------------------------------ design
+design:
+  folds: 5
+  targets_per_fold: 10            # class balanced, 5 per class, fewer if the test fold has fewer (creditcard: 6)
+  cap: 3000                       # larger datasets are subsampled, stratified
+  arms: [clean, attack, control]  # clean: b = 0; attack: b random rows overwritten by an exact copy of the target row with
+                                  # the wrong label; control: the same rows, the copy with the true label
+  budgets: [1, 2, 3, 4, 5]   # number of poison rows (exact copies, r = 0); nested
+
+# ------------------------------------------------------------------ models
+models:
+  - {name: tabicl-n8,   kind: tabicl,   n_est: 8,  env: tabicl_env}
+  - {name: tabpfn35-n8, kind: tabpfn35, n_est: 8,  env: tabfm_cu130}    # tabpfn 9.1.0, TabPFNV3p5
+  - {name: catboost,    kind: catboost, threads: 6, env: tabicl_env}    # threads do not change a prediction
+
+# ------------------------------------------------------------------ datasets
+# The 30 datasets of the study: continuous features, both TFMs reach an AUC of at least 0.8 without attack.
+# Loaded from the OpenML cache in cache/ (no download).
+datasets:
+  - {name: MagicTelescope,                    did: 1120}
+  - {name: MiniBooNE,                         did: 44128}
+  - {name: Pulsar-Dataset-HTRU2,              did: 45558}
+  - {name: banknote-authentication,           did: 1462}
+  - {name: climate-model-simulation-crashes,  did: 40994}
+  - {name: codrna,                            did: 351}
+  - {name: covertype,                         did: 44121}
+  - {name: creditcard,                        did: 1597}
+  - {name: delta_ailerons,                    did: 803}
+  - {name: eeg-eye-state,                     did: 1471}
+  - {name: electrical_grid_stability,         did: 46298}
+  - {name: electricity,                       did: 44120}
+  - {name: hazelnut-spread-contaminant,       did: 46930}
+  - {name: hill-valley,                       did: 1479}
+  - {name: jannis,                            did: 45021}
+  - {name: kin8nm,                            did: 807}
+  - {name: mammography,                       did: 310}
+  - {name: ozone-level-8hr,                   did: 1487}
+  - {name: phoneme,                           did: 44127}
+  - {name: polish_companies_bankruptcy,       did: 46950}
+  - {name: puma8NH,                           did: 816}
+  - {name: stock,                             did: 841}
+  - {name: wdbc,                              did: 1510}
+  - {name: wilt,                              did: 40983}
+  - {name: wine,                              did: 43980}
+  - {name: california,                        did: 44090}
+  - {name: house_16H,                         did: 44123}
+  - {name: spambase,                          did: 44}
+  - {name: elevators,                         did: 846}
+  - {name: credit,                            did: 44089}

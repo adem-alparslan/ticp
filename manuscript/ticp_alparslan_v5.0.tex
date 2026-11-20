@@ -1,0 +1,1300 @@
+\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\babelhyphenation{TabICLv TabICL TabPFN}
+\usepackage[autostyle]{csquotes}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,calc}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{float}
+\makeatletter
+\let\table\tableorg
+\let\endtable\endtableorg
+\let\sidewaystable\sidewaystableorg
+\let\endsidewaystable\endsidewaystableorg
+\makeatother
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{pdflscape}
+
+\raggedbottom
+
+\newcommand{\abbildung}[1]{%
+  \IfFileExists{#1.pdf}{\includegraphics[width=\linewidth]{#1.pdf}}%
+  {\fbox{\parbox[c][4cm][c]{0.9\linewidth}{\centering\ttfamily\detokenize{#1} missing}}}}
+
+\newsavebox\breitebox
+\newcommand{\maxbreite}[1]{\sbox\breitebox{#1}\ifdim\wd\breitebox>\linewidth
+\resizebox{\linewidth}{!}{\usebox\breitebox}\else\usebox\breitebox\fi}
+
+\newenvironment{fragen}{\begin{list}{}{\settowidth{\labelwidth}{(1a)}%
+  \setlength{\leftmargin}{\dimexpr\labelwidth+\labelsep\relax}%
+  \setlength{\itemsep}{1pt}\setlength{\topsep}{3pt}}}{\end{list}}
+
+\setlength{\emergencystretch}{2em}
+
+\makeatletter
+\newcommand{\FloatBarrier}{\par\begingroup\let\@elt\relax
+  \edef\@tempa{\@botlist\@deferlist\@dbldeferlist}%
+  \ifx\@tempa\@empty\else\newpage\fi\endgroup}
+\makeatother
+
+\newcommand{\pf}{\pi_F}
+\newcommand{\pfnull}{\pi_{F,0}}
+
+\input{zahlen}
+\input{zahlen_lage}
+\input{zahlen_tests_v5}
+\input{zahlen_referenz}
+\input{zahlen_duplikat}
+\input{zahlen_creditcard}
+\input{zahlen_text}
+\input{zahlen_kopp}
+
+\title[Targeted in-context poisoning of tabular foundation models]{Targeted In-Context Poisoning of Tabular Foundation Models: An Empirical Study}
+
+\author*[1]{\fnm{Adem} \sur{Alparslan}}\email{adem.alparslan@fom.de}
+
+\affil*[1]{\orgname{FOM Hochschule für Oekonomie \& Management}, \orgaddress{\city{Essen}, \country{Germany}}}
+
+\abstract{Tabular foundation models (TFMs) predict the label of a query row from a context of labelled rows without training on them. Drawn from operational data, the context becomes an attack surface. We study targeted in-context poisoning in its simplest form: an attacker with write access to the source of the context places exact copies of a target row there with the wrong label. On \zDS\ OpenML datasets for binary classification, one such poison row flips on average \zICLasrEins\,\% (TabICLv2) and \zPFNasrEins\,\% (TabPFN-3.5) of the predictions correct without attack, and three poison rows flip almost all. The same copy with the true label flips almost none, and performance on the remaining rows hardly changes. Inside the TFMs, predictions flip by two routes: in TabICL, the embedding of the target row rotates towards the mean of the wrong class; in TabPFN, the poison row pulls genuine rows of the wrong class along. The TFMs thus do not err in their inference but infer soundly from forged evidence. Predictions of random forest and CatBoost flip as well, those of a logistic regression hardly. New with TFMs is not the kind of vulnerability but the timing: the data take effect at the moment of prediction, and with a live context a poison row can be deleted afterwards. Three established requirements must therefore cover the context: access control for its source, traceability per prediction, which can also deter, and validation at prediction time. A detection mechanism shows how such a validation can work.}
+
+\keywords{tabular foundation models, in-context learning, in-context poisoning, data poisoning, label flipping, TabICL, TabPFN}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+\label{sec:einleitung}
+
+Tabular foundation models (TFMs) carry the in-context learning (ICL) of
+language models over to tables~\citep{brown2020, muller2022,
+hollmann2025, qu2025, vanbreugel2024}. They predict the label of a new
+row, the query row, from the labelled rows in their context. This happens
+in a single forward pass and without training on the task. Instead, they
+are trained in advance, mostly on a large number of synthetic tables.
+These are drawn from a distribution over datasets, the prior, which is
+defined by random structural causal models~\citep{hollmann2025, qu2026,
+grinsztajn2026, jaeger2026}. Read in Bayesian terms, TFMs thereby
+approximate the posterior predictive distribution that follows from this
+prior and the context~\citep{muller2022, hollmann2025}. For small and
+medium-sized datasets, TFMs are reported to match or even exceed the
+performance of tree-based models and deep learning
+models~\citep{qu2026, grinsztajn2026, kurashkin2026}.
+
+In operation, the context can come directly from operational
+data~\citep{sap2026}. Data platforms, for example, allow TFMs to be run
+directly on the table in which the data
+reside~\citep{kongdas2026, googlecloud2026}. Whoever can write to these
+data changes the input of a TFM and thus the basis of its next
+prediction, without waiting for a training run. This makes the context a
+potential attack surface.
+
+We examine an attack on this surface in its simplest targeted form and
+call it targeted in-context poisoning. The attacker wants
+a particular query row, the target row, to receive the wrong label, and
+writes one to five exact copies of the target row with the wrong label
+in place of as many context rows. Such a copy is called a poison row,
+the remaining context rows are called genuine context rows. A prediction
+flips if the model predicts the target row correctly without attack and
+wrongly under attack. No context row can be closer to the target row in
+its features than its exact copy. If a model relies on similar rows,
+this should show most clearly for the exact copy. This is why we choose
+this form. A TFM, however, compares rows in its representation, which it
+forms from the features and the labels of the context, and there the
+poison row need not be close to the target row. Whether and how often
+the attack works is therefore an empirical question.
+
+The exact copy is at the same time the most conspicuous form of the
+attack, and this is intended. As a duplicate of the target row, it can
+be found if the context is checked for duplicates of the query row
+before every prediction. The study thus does not look for an attack
+method that outwits a check of the context. Instead, it aims to raise
+awareness that the context of a TFM can be an attack surface through
+which its predictions can be steered. Nor does it pass judgement on the
+performance of the TFMs examined.
+
+For trained models, the manipulation of the training data, known as data
+poisoning, is well studied~\citep{biggio2012, xiao2012, shafahi2018,
+goldblum2023, cina2023, vassilev2025}. For TFMs, in contrast, the study
+of their vulnerability is still at an early stage. \citet{djilani2026}
+study evasion attacks: they perturb the query row slightly and show that
+even small, structured perturbations lower the accuracy of TFMs
+considerably, while the context remains unchanged. \citet{bilos2026}
+corrupt the context as a whole, for example by flipping the labels of
+its most central rows, and measure the loss in mean accuracy. Their
+attacks target the mechanism by which the models predict, not individual
+predictions, and lower the performance of the model overall.
+
+Two studies come close to the attack examined here. \citet{anwar2025}
+manipulate individual context rows of a transformer that learns in
+context: for single-layer linear transformers that learn linear
+regression in context, they prove that a single altered context row can
+force an arbitrary prediction. \citet{wahdany2026} place copies of a
+query row with the wrong label in the context of a TFM, but use them for
+membership inference: how many copies are needed to flip the prediction
+reveals whether the row is already in the context.
+
+As a poisoning attack that redirects the prediction for a chosen query
+row, the manipulation of the context of a TFM has, to our knowledge, not
+been studied so far. It is analogous to the
+poisoning of demonstrations for language
+models~\citep{he2025} and of retrieval corpora~\citep{zou2025}. As in
+indirect prompt injection~\citep{greshake2023}, the attacker places the
+input in data that the model reads only at prediction time. In the
+taxonomy of the National Institute of Standards and Technology (NIST),
+the attack is a targeted poisoning attack: it is not meant to lower the
+performance of the model overall, but to redirect the prediction for
+individual target rows chosen by the attacker~\citep{vassilev2025}. It
+requires control over the context, which here takes the place of the
+training data. The attacker can thus alter rows of the context and, in
+particular, flip their labels (label flipping). For trained models, this
+form of attack is considered effective~\citep{vassilev2025}. Whether
+label flipping is equally effective against a TFM is what this study
+examines.
+
+We run the attack on two current TFMs of different architecture,
+TabICLv2~\citep{qu2026} and TabPFN-3.5~\citep{jaeger2026}, referred to
+below as TabICL and TabPFN. The basis is \zDS\ public datasets for
+binary classification on which both TFMs classify well. Besides the
+attack arm, in which the context contains the poison rows, there is a
+control arm: there the same copies carry the true label and are called
+control rows. Comparing the two arms is meant to separate the effect of
+the wrong label from the effect that a copy of the target row in the
+context has by itself.
+
+The findings on data poisoning concern models that are trained
+on the poisoned data. Whether flipping is a peculiarity of TFMs is shown
+by three such models, trained on the same poisoned context: a random
+forest, CatBoost~\citep{prokhorenkova2018} and a logistic regression.
+The questions of this study are nevertheless addressed to the TFMs
+alone, because the datasets are selected by their performance.
+
+Three research questions guide the study. The first asks about the
+effect of the wrong label and, to this end, compares the attack arm with
+the control arm. It is posed for each of the two TFMs:
+\begin{fragen}
+\item[(1a)] Do one to five poison rows flip more predictions in TabICL
+that are correct without attack than as many control rows?
+\item[(1b)] Do they also flip more such predictions in TabPFN than as
+many control rows?
+\end{fragen}
+
+The first question settles whether and how often predictions flip, but
+not what the poison row changes inside a TFM. For this, we look in each
+model at the place where it forms its decision.
+
+In TabICL, an MLP forms the decision from the embedding of the target
+row. It cannot be read off there directly. \citet{bilos2026} report a
+readout rule that largely reproduces the predictions of TabICL on
+classification tasks, and \citet{kurashkin2026} adopt it in their survey:
+for each class the centroid is formed as the mean of the embeddings of
+its context rows, and the target row receives the class of the nearest
+centroid. This rule is
+reported for contexts without attack. If a poison row only shifted the
+centroid, it should have little effect, because it enters the centroid
+of the wrong class as only one of many rows. If the rule also holds
+under attack, a flipped target row lies closer to the centroid of the
+wrong class and a held one closer to the centroid of the true class. The
+second question therefore has two parts:
+\begin{fragen}
+\item[(2a)] In TabICL, does the embedding of a flipped target row lie
+closer to the centroid of the wrong class under attack?
+\item[(2b)] Does the embedding of a held target row lie closer to the
+centroid of the true class under attack?
+\end{fragen}
+
+The decision of TabPFN is a weighted vote over the labels of the context
+rows: the model forms its prediction in a decoder through attention over
+these labels, designed as a soft nearest-neighbour retrieval over the
+context~\citep{grinsztajn2026}. Unlike in TabICL, the decision can be
+read off directly here, from the weights that the target row places on
+the context rows. The prediction flips exactly when the rows with the
+wrong label together receive more than half of the weight. If the attack
+flips a prediction, it is plausible that the poison rows, as exact copies
+of the target row, alone receive more than half.
+The third question reads:
+\begin{fragen}
+\item[(3)] In TabPFN, do the poison rows receive more than half of the
+weight for flipped target rows?
+\end{fragen}
+
+With the answers to these questions and the conclusions drawn from them,
+the study makes three contributions. First, it shows that the context of
+a TFM is an attack surface and can be manipulated in a targeted way.
+Second, it describes what happens inside two TFMs of different
+architecture when their context is poisoned. Third, it argues that three established requirements for secure
+operation must cover the context of a TFM: access control, traceability
+and validation.
+
+The study is structured as follows: Section~\ref{sec:setup} describes
+the experimental setup, and Section~\ref{sec:ergebnisse} reports first
+the effect of the attack, also on trained models, and then what happens
+inside the two TFMs. Section~\ref{sec:diskussion} answers the research questions,
+interprets flipping as a sound inference from forged evidence, derives
+implications for operation and names limitations, and
+Section~\ref{sec:fazit} concludes.
+
+\section{Experimental setup}
+\label{sec:setup}
+
+\subsection{Threat model, attack arm and control arm}
+\label{sec:aufbau}
+
+We examine the attack in binary classification. The goal of an attacker
+is that a particular query row, the target row, receives the label the
+attacker wants, while all other predictions remain unchanged, so that
+the attack does not show in the overall performance of the model. In the experiment, this is always the label opposite to the true one,
+which we call the wrong label. The feature values of the target row are known
+to the attacker before the prediction, for example because the attacker
+submits the query row. Knowledge of the model or its weights is not
+required, and the number of poison rows is chosen without observing
+predictions of the model.
+
+For the attack to work, the poison rows must reach the context. We
+therefore assume that the attacker can write and overwrite entries of
+the source from which the context is formed. We further assume that
+these entries reach the context of the target row before its prediction, for example
+because the context comprises the whole source. Access to the model
+itself is not required.
+
+To flip the prediction of the target row, the attacker replaces $b$ of
+the $n$ context rows with poison rows. A poison row is an exact copy of
+the target row: it agrees with it in every feature value but carries the
+wrong label. The number $b$ of replaced rows is the budget, with
+$b \in \{1, 2, 3, 4, 5\}$. The remaining $n - b$ context rows stay
+unchanged. Replacing the rows instead of adding them is a design
+decision. It fixes the context size $n$ and thus the number of rows the
+TFM reads. For both TFMs it also fixes the scaling of the queries in the
+attention, which depends on the context length~\citep{qu2026,
+grinsztajn2026}. Replacing uses the fact that the attacker can overwrite
+existing entries.
+
+The rows to be replaced are drawn at random from the whole context, so
+the attack does not systematically remove genuine rows near the target
+row. All models see the same poisoned context for the same target row. The budgets are nested: the rows replaced at budget
+$b > 1$ include those replaced at $b - 1$, so that two budgets differ
+only in the poison rows added.
+
+Every target row is predicted under three conditions: once without
+attack and, for every budget, once in the attack arm and once in the
+control arm, eleven times in total. In the attack arm, the context
+contains the poison rows. In the control arm, control rows replace the
+same context rows as in the attack arm. A control row is the same copy
+of the target row with the true label. The two arms thus differ only in
+the label of the copies. A difference between them is therefore due to
+the label, not to the copy itself.
+
+\subsection{Data}
+\label{sec:daten}
+
+The \zDS\ datasets for binary classification come from OpenML
+\citep{vanschoren2014} (Appendix~\ref{app:daten}). All have exclusively
+numerical features. All models thus receive the same input, and no
+model-specific handling of categorical features confounds the results.
+
+On every dataset, both TFMs reach an AUC of at least 0.8 without attack,
+averaged over the five test folds (see below). The study thus excludes
+tasks on which a TFM classifies poorly. The threshold
+of 0.8 is a pragmatic choice. Both criteria, exclusively numerical features and an
+AUC of both TFMs of at least 0.8, are tailored to the TFMs. The datasets
+do not come from a fixed benchmark suite. We collected 32 datasets for binary
+classification with exclusively numerical features from OpenML. Two of them fail the AUC threshold
+(Appendix~\ref{app:daten}). The selection was based solely on the data
+and the performance without attack, not on the effect of the attack. The
+remaining datasets range from \zRowsMin\ to \zRowsMax\ rows, from
+\zFeatMin\ to \zFeatMax\ features, and from a balanced class
+distribution to a minority class of \zMinorityMinPct\,\%.
+
+Every dataset is reduced to a stratified random sample of at most 3,000
+rows. This lies in the range of small and medium-sized tables in which
+TFMs are considered particularly strong \citep{hollmann2025,
+erickson2025}. The features are passed to the models unchanged. Only for
+the logistic regression are they imputed and standardised
+(Appendix~\ref{app:referenz}).
+
+Every sample is split into five stratified folds. Each fold serves once
+as test rows, the other four as context. The context thus contains at
+most 2,400 rows and fewer for small datasets, \zCtxMin\ in the smallest.
+Even five poison rows therefore make up at most \zGiftAnteilMax\,\% of
+the context. From the test rows of every fold, up to five target rows
+per class are drawn at random, so that both classes are equally
+represented. The exception is \texttt{creditcard}: each of its test
+folds contains only one row of the minority class, so that this dataset
+has \zCreditZiele\ target rows, 25 of the majority class and 5 of the
+minority class. This gives \zZiele\ target rows, 50 for each of the
+other datasets. Even without attack, the context contains exact
+duplicates with the true label in \zDupDS\ of the \zDS\ datasets, for
+\zDupZiele\ target rows in total, and \zDupMax\ for one target row. They
+remain in the context. Among the target rows that hold even at five
+poison rows, most have such a duplicate (Section~\ref{sec:budget}).
+
+Without attack, all target rows of a fold share the same context. In the
+attack arm and in the control arm, every target row receives its own
+context, which contains only its own copies.
+
+\subsection{Quantifying the effect of the attack}
+\label{sec:wirkung}
+
+Table~\ref{tab:masse} summarises the quantities of this study. For every
+target row, $\pfnull$ and $\pf$ denote the predicted probability of the
+wrong label without and under attack. We evaluate only target rows for which the model predicts the true label
+without attack, as a rule $\pfnull < 0.5$. For the others, a wrong
+prediction could not be attributed to the attack. The evaluated rows are
+called the attacked target rows of the model: \zICLangegriffen\ of the \zZiele\ target rows for TabICL and
+\zPFNangegriffen\ for TabPFN (Appendix~\ref{app:guete}). Without attack,
+the two TFMs reach a mean AUC over the datasets of \zICLauc\ (TabICL)
+and \zPFNauc\ (TabPFN). An attacked target row is called flipped if the
+model predicts the wrong label for it under attack, as a rule $\pf > 0.5$, above the decision threshold, and held
+otherwise.
+
+Every attack is directed at a single target row and succeeds if this row
+flips.
+To measure how often it succeeds, the attack is carried out for
+every target row separately. The attack success rate (ASR)
+is the share of successes among these individual attacks
+\citep{shafahi2018}, per budget, dataset and model. The target rows are
+drawn balanced by class (Section~\ref{sec:daten}), but the attacked ones
+no longer are, because the models predict rows of the minority class
+correctly less often (Appendix~\ref{app:guete}). The ASR of a dataset
+therefore weights the majority class somewhat more strongly.
+
+Every model has its own attacked target rows. The two TFMs are therefore
+compared per dataset, not per target row
+(Table~\ref{tab:app_asr_ds_b}).
+
+Beyond the target row, every model in every arm also predicts the
+remaining test rows of its fold with the context of this target row. We
+record the AUC on them to check whether the attack stays targeted, that
+is, does not change the performance on the remaining rows. It is
+computed for the context of every attacked target row, averaged per
+dataset and then over the datasets.
+
+\begin{table}[!t]
+\centering\scriptsize
+\caption{Notation. The index $0$ marks the run without attack. $T$ and $F$ mark the true and the wrong label of the target row. The predicted label is the one with the larger probability, class 1 at exactly 0.5. We call 0.5 the decision threshold.}
+\label{tab:masse}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}X@{}}
+\toprule
+Quantity & Meaning   \\
+\midrule
+\multicolumn{2}{@{}l}{All models: output} \\
+$\pfnull$, $\pf$ & predicted probability $\pfnull$ of the wrong label without attack and predicted probability $\pf$ under attack \\
+$\pi_T$ & predicted probability of the true label, $\pi_T = 1 - \pf$ \\
+ASR & attack success rate: share of the attacked target rows that flip under attack, per budget, dataset and model. In the text in per cent, in the tables as a share \\
+AUC & performance on the test rows of the fold without attack, and on the remaining test rows under attack and in the control arm \\
+\midrule
+\multicolumn{2}{@{}l}{TabICL: relative closeness of the target row to the class centroids} \\
+$z$, $z_0$ & embedding $z$ of the target row in the respective arm and embedding $z_0$ without attack, each taken after the last ICL block and the final layer normalisation, the input of the MLP \\
+$\mu_T$, $\mu_F$ & class centroids: mean $\mu_T$ of the embeddings of the context rows with the true label of the target row and mean $\mu_F$ of those with the wrong label, formed in the respective arm. $\mu_{T,0}$ and $\mu_{F,0}$ are the same centroids without attack \\
+$m$ & relative closeness of the target row to the two class centroids, an approximation of the decision: $m = \cos(z, \mu_F)/\cos(z, \mu_T)$, formed per member and averaged over the members. At $m > 1$ the target row is closer in angle to the centroid of the wrong class \\
+$m_0$ & $m$ without attack \\
+
+$\cos(z, z_0)$ & cosine between the embedding of the target row under and without attack, 1 without movement \\
+$\cos(\mu_T, \mu_{T,0})$, $\cos(\mu_F, \mu_{F,0})$ & cosine $\cos(\mu_T, \mu_{T,0})$ between the centroid of the true class under and without attack and cosine $\cos(\mu_F, \mu_{F,0})$ for the centroid of the wrong class, 1 without movement \\
+$\nu_F$ & number of rows with the wrong label among the 25 nearest genuine context rows of the target row at the input of the MLP, by cosine, excluding the poison rows or control rows, averaged over the members. At $\nu_F > 12.5$ the wrong class holds the majority \\
+\midrule
+\multicolumn{2}{@{}l}{TabPFN: weights in the decoder} \\
+$a_j$ & weight of context row $j$, $a_j = \tfrac{1}{H}\sum_{h} \operatorname{softmax}_j\bigl(q^{(h)\top} k_j^{(h)}/\sqrt{d}\bigr)$, $\sum_j a_j = 1$, with the query $q^{(h)}$ of the target row, scaled depending on the context length, and the key $k_j^{(h)}$ of context row $j$ in head $h$, $H = 6$ heads and dimension $d = 64$, then averaged over the members \\
+$a_T$, $a_F$ & weight $a_T$ of the true label and weight $a_F$ of the wrong label: each the sum of the weights of all context rows with that label. $a_F$ is the decision itself, $\pf = a_F$ \\
+$a_{F,G}$, $a_{F,P}$ & under attack the two parts of $a_F$: weight $a_{F,G}$ of the genuine rows of the wrong class and weight $a_{F,P}$ of the poison rows, $a_F = a_{F,G} + a_{F,P}$ \\
+$a_{T,G}$, $a_{T,C}$ & in the control arm the two parts of $a_T$: weight $a_{T,G}$ of the genuine rows of the true class and weight $a_{T,C}$ of the control rows, $a_T = a_{T,G} + a_{T,C}$ \\
+$a_{F,0}$, $a_{T,0}$ & weight $a_{F,0}$ of the wrong label and weight $a_{T,0}$ of the true label without attack \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Models and readout sites}
+\label{sec:modelle}
+
+TabICL \citep{qu2026} and TabPFN \citep{jaeger2026} are pretrained on
+synthetic tables. They process the context and the query row, here the
+target row, in roughly three steps.
+First, they embed every row into a vector, each column conditioned on the
+context~\citep{qu2026, grinsztajn2026}. The vectors of the context rows
+contain their labels, the vector of the query row contains none. Then all
+rows pass through the ICL blocks, 12 in TabICL and 24 in TabPFN, in which
+every row attends to the context rows. Finally, TabICL forms the
+prediction with an MLP on the embedding of the query
+row~\citep{qu2026}, TabPFN with an attention-based retrieval decoder~\citep{grinsztajn2026}: the query row distributes weights over
+the context rows, a softmax normalises them to sum to one, and the labels
+of the context rows enter the prediction with these weights.
+
+Both models are run as an ensemble of eight members, as in their default
+setting. Each member sees the table with its own preprocessing of the
+features \citep{qu2025, grinsztajn2026}, its own column order and its own
+class encoding, so its embeddings lie in a space of their own. The
+following quantities are therefore computed per member and then averaged
+over the members. All settings of both models stay at their defaults.
+
+For TabICL, the decision of the MLP cannot be read off directly and is
+therefore approximated by the position of the target row relative to the
+class centroids. The embedding $z$ of the target row is the output of the
+last ICL block after the final layer normalisation and the only input of
+the MLP~\citep{qu2026}. The class centroids $\mu_T$ and $\mu_F$ are the
+means of the embeddings of the context rows with the true and with the
+wrong label of the target row. They are recomputed for each target row and
+in each arm from the respective context, so a poison row enters $\mu_F$
+and a control row enters $\mu_T$.
+The relative closeness
+\[
+  m = \frac{\cos(z, \mu_F)}{\cos(z, \mu_T)}
+\]
+divides the cosine similarity of the target row to the centroid of the
+wrong class by that to the centroid of the true class. It is greater than
+one when the target row is closer in angle to the centroid of the wrong
+class. The rule $m > 1$ thus corresponds to the readout rule over the
+nearest centroid reported for TabICL~\citep{bilos2026}. Both cosine
+values are positive in every measurement and in every member, so $m$ is
+well defined (Appendix~\ref{app:icl}). Without attack, the relative
+closeness is called $m_0$. Whether the target row or the class centroids
+move is shown by $\cos(z, z_0)$, $\cos(\mu_T, \mu_{T,0})$ and
+$\cos(\mu_F, \mu_{F,0})$. They measure how far the embedding of the
+target row and the two class centroids rotate relative to the context
+without attack. A value of one means no rotation. While $m$
+describes the position of the target row relative to the means of whole
+classes, $\nu_F$ shows its immediate surroundings: it counts how many of
+the 25 nearest genuine context rows of the target row at the input of the
+MLP carry the wrong label, by cosine and excluding the poison rows or control
+rows. The
+wrong class holds the majority among these neighbours when more than half
+of them carry the wrong label. Because $\nu_F$ is averaged over the members of the ensemble and
+is therefore not an integer, the threshold lies at
+$\nu_F > 12.5$.
+
+For TabPFN, we read off the weights $a_j$ that the target row places on
+the context rows in the decoder, after the scaling of the query
+\citep{grinsztajn2026, jaeger2026} and averaged over the heads. With
+these weights the model votes. In contrast to TabICL, the decision of
+TabPFN is thus measured directly. Summed by the label of the rows, they
+give the weight $a_T$ of the true class and $a_F$ of the wrong class,
+without attack $a_{T,0}$ and $a_{F,0}$. The decoder outputs the one-hot
+labels averaged with these weights as probabilities, and TabPFN averages
+these probabilities over the eight members of the ensemble. Hence
+$\pf = a_F$ up to numerical precision, with a largest deviation of
+\zPFNidentMax\ (Table~\ref{tab:app_e_vote_1}). Under attack, the weight
+$a_F$ of the wrong class splits into the weight $a_{F,G}$ of the genuine
+rows with the wrong label and the weight $a_{F,P}$ of the poison rows:
+\[
+  a_F = a_{F,G} + a_{F,P}.
+\]
+In the control arm, the weight $a_T$ of the true class is composed of the
+weight $a_{T,G}$ of the genuine rows with the true label and the weight
+$a_{T,C}$ of the control rows:
+\[
+  a_T = a_{T,G} + a_{T,C}.
+\]
+In addition, we determine whether one of the poison rows is the strongest
+row, that is, carries the largest weight in every member, even where it
+alone receives less than half.
+
+The trained models are a random forest, CatBoost
+\citep{prokhorenkova2018} and a logistic regression, likewise at their
+default settings, the latter with up to 5,000 iterations
+(Appendix~\ref{app:referenz}). They are trained on the same context
+including the copies, anew for every target row, every budget and every
+arm, and once per fold without attack. In these models, the poisoning thus acts
+through training. Without attack they
+likewise reach an average AUC above 0.8, but a lower one than the TFMs
+(Appendix~\ref{app:trainiert_guete}).
+
+\subsection{Statistical analysis}
+\label{sec:statistik}
+
+The unit of analysis is the dataset. Each model makes \zVorhersagen\
+predictions, eleven per target row. These predictions are not
+independent: the target rows of a dataset come from the same
+distribution, and their contexts derive from the same fold context. Every quantity
+is therefore first averaged per dataset over its target rows from all
+five folds and then reported over the \zDS\ datasets. The standard
+deviations are given in the appendix. Where a count pools the target
+rows of all datasets, this is noted at that point. Groups such as
+flipped and held target rows are formed per dataset and budget. A
+dataset belongs to a group as soon as it has one target row in it, so
+that its mean can rest on few target rows. Two groups are compared
+paired over the datasets that have both.
+
+Each research question from (1a) to (3) is assigned a test
+(Table~\ref{tab:tests} in Appendix~\ref{app:tests}). All tests are
+Wilcoxon signed-rank tests over the datasets~\citep{demsar2006}. For
+(1a) and (1b), the test is a paired comparison of the attack arm with
+the control arm. For (2a) and (2b), it tests $m$ against 1, because that is the
+threshold of the readout rule. For (3), it tests $a_{F,P}$ against 0.5, because that is the
+decision threshold: if the poison rows receive more than half of the
+weight, they flip the prediction alone. All tests are two-sided, although the
+questions are directional, and are thus conservative. Datasets with a
+difference of zero are excluded from a test. They occur only in tests
+(1a) and (1b) at one poison row, on datasets where neither a poison row
+nor a control row flips a target row. A result is called significant at
+$p < 0.05$. Because each test answers a question of its own, it forms a
+family of its own with its five budgets, within which we correct
+according to Holm~\citep{demsar2006}. Every reported $p$ is
+Holm-corrected unless it is explicitly marked as uncorrected. If one
+corrects over all 25 tests instead, every significant result remains,
+except for test~(3) at two poison rows
+($p = \zHolmGesamtAPZwei$ with Holm over all 25 tests). The
+test tables in Appendix~\ref{app:tests} (Tables~\ref{tab:test_a},
+\ref{tab:test_d} and~\ref{tab:test_e}) give as effect size the mean
+difference and the number of datasets on each side, with the excluded
+datasets in the column \enquote{equal}.
+
+For all other quantities we run no tests and report them descriptively.
+These include the difference between the two TFMs, in TabICL the
+movement of the target row and of the class centroids and the
+neighbourhood $\nu_F$, in TabPFN the weight $a_{F,G}$, and the results
+of the trained models. For each dataset, the AUC with which $m$ and
+$\nu_F$ separate flipped from held target rows shows how well they
+capture the decision. We interpret causally only what the experiment
+manipulates, that is, the budget $b$ and the label of the copies in the
+two arms. We describe what happens inside the models without explaining
+it causally, because the experiment does not intervene in them.
+
+\section{Results}
+\label{sec:ergebnisse}
+
+\subsection{Effect of the attack}
+\label{sec:budget}
+
+A single poison row already flips the majority of the attacked target
+rows in both TFMs, on average \zICLasrEins\,\% for TabICL and
+\zPFNasrEins\,\% for TabPFN. The share rises with every further poison
+row, and from three poison rows on almost all flip
+(Figure~\ref{fig:asr}). The few target rows that hold even at five
+poison rows mostly have a genuine duplicate with the true label in the
+context (Table~\ref{tab:app_asr_ds_b}). The more duplicates there are,
+the further $\pi_T$ stays above the decision threshold. Without
+duplicates or with only a few, it stays only just above it.
+
+The effect of the attack is due to the wrong label, not to the copy.
+Across all datasets, models and budgets, the same copy with the true
+label flips only one target row in total. The test confirms this: in both TFMs
+and at every budget, poison rows flip statistically significantly more
+predictions than control rows (research questions~(1a) and~(1b),
+$p \zHolmArmMax$, Table~\ref{tab:test_a}). In the control arm, the copy
+even has a corrective effect: a single control row already corrects most
+of the predictions that are wrong without attack (\zICLkorrigiertEins\,\%
+for TabICL and \zPFNkorrigiertEins\,\% for TabPFN,
+Table~\ref{tab:app_kontrolle_ds_b}). The label of the copy thus determines in which direction the prediction
+moves.
+
+\begin{figure}[tb]
+\centering
+\includegraphics[width=0.75\linewidth]{fig_asr_trainiert}
+\caption{ASR of all models per budget $b$: first the two TFMs (green), then random forest, CatBoost and logistic regression (grey). Bars: mean over the \zDS\ datasets, in per cent as the number in the bar. Values per dataset in Tables~\ref{tab:app_asr_ds_b} and~\ref{tab:app_trainiert_asr}.}
+\label{fig:asr}
+\end{figure}
+
+The effect of a single poison row varies strongly across the datasets. On
+most datasets, it flips at least half of the target rows. On a few, it
+flips almost none (Table~\ref{tab:app_asr_ds_b}). At one and two poison
+rows, about \zDiffPFNICL\ percentage points more target rows flip in
+TabPFN than in TabICL, but the datasets on which many predictions flip are similar for
+both: at one poison row, the ASR of the two TFMs correlates across the
+datasets with Spearman's $\rho = \zRhoTFMEins$. With more poison rows
+the gap shrinks, at three to \zDiffPFNICLDrei\ percentage points,
+because almost all target rows then flip in both TFMs.
+
+The attack stays targeted. Averaged over the datasets, the AUC on the
+remaining test rows changes by at most \zDaucMittelMax. This holds for
+both TFMs and all budgets. On no single dataset does it change by more
+than about \zTFMaucMax\ (Appendix~\ref{app:ausserhalb_auc}). The attack
+thus does not show in the overall performance of the TFMs.
+
+Whether flipping is a peculiarity of TFMs is shown by the comparison
+with three models that are trained on the same poisoned context. Their
+predictions flip as well, but how often differs greatly between the
+models (Figure~\ref{fig:asr}, Table~\ref{tab:app_trainiert_asr}): one
+poison row flips almost all attacked target rows for the random forest
+(\zRFasrEins\,\%), a good half for CatBoost (\zCATasrEins\,\%) and almost
+none for the logistic regression (\zLRasrEins\,\%). In the control arm,
+no target row flips for any of the three models. Because the datasets
+are selected by the performance of the TFMs, these shares do not show
+whether predictions of trained models in general flip more or less often
+than those of TFMs.
+
+It is more informative to look at the datasets on which many predictions
+flip. Despite a similar ASR, CatBoost at one poison row
+differs clearly from the TFMs in this respect. On \texttt{Pulsar-Dataset} and \texttt{wilt},
+one poison row flips more than half of the attacked target rows for
+CatBoost and almost none for TabICL and TabPFN. On \texttt{phoneme} and
+\texttt{electricity} it is the other way round: half or more flip there
+for the TFMs, at most a quarter for CatBoost
+(Tables~\ref{tab:app_asr_ds_b} and~\ref{tab:app_trainiert_asr}). Across
+all \zDS\ datasets, the ranking by ASR for CatBoost is hardly related to
+that for TabICL or TabPFN (Spearman's $\rho = \zRhoCATICLEins$ and
+\zRhoCATPFNEins).
+
+\subsection{Inside the models}
+\label{sec:innen}
+
+\subsubsection{TabICL: the position of the target row}
+\label{sec:icl}
+
+\begin{figure}[tb]
+\centering
+\includegraphics[width=0.75\linewidth]{fig_m_arme}
+\caption{TabICL, the relative closeness $m$ under attack per budget $b$, for the held (blue) and the flipped (orange) target rows. The basis is, per dataset, the mean of $m$ over its target rows of the group. Box: quartiles over the datasets, line: median, diamond: mean, whiskers: up to 1.5 times the interquartile range, points: values beyond. Number at the bottom: number of datasets with the group. Dashed line: the threshold $m = 1$ of the readout rule. Values per dataset in Table~\ref{tab:app_m_liste_m}.}
+\label{fig:m_arme}
+\end{figure}
+
+Research questions (2a) and (2b) test whether the readout rule reported for
+TabICL also holds under attack. Figure~\ref{fig:m_arme} shows the mean
+$m$ per dataset for the flipped and the held target rows. On average, the rule holds for both
+groups: flipped target rows lie above the threshold
+$m = 1$ of the readout rule, held ones below it
+(Table~\ref{tab:test_d}). At every budget, flipped target rows have
+$m > 1$ with statistical significance, so they lie closer to the
+centroid $\mu_F$ of the wrong class ($p < 0.001$). At one poison row they lie only just above the
+threshold, and further above it with every additional poison row. Held target rows have $m < 1$, so they lie closer to the
+centroid $\mu_T$ of the true class, significantly at one to three poison
+rows ($p < 0.01$). From four poison rows on, only five datasets still
+have held target rows, too few for the test to become significant,
+because with five datasets even the uncorrected $p$ does not fall below
+0.063. At four and five poison rows, too, the held target rows lie
+below the threshold on almost all of these datasets.
+
+The relative closeness $m$ also orders the target rows well: within a
+dataset, it separates flipped from held target rows with an average AUC
+of \zMauc\ (Table~\ref{tab:app_m_liste_innen}). For the individual target
+row, however, the threshold $m = 1$ does not always agree with the
+decision of TabICL: at one poison row, about a quarter of the flipped
+target rows still lie below it (Table~\ref{tab:app_m_liste_regel}). Even
+without attack, \zMnullUeberZeilen\ of the \zICLangegriffen\ attacked
+target rows already lie above it, although TabICL predicts the true class
+for them (Table~\ref{tab:app_d_alle}). The reason lies in the measure:
+$m$ derives only two cosine values from $z$ and the context, whereas the
+MLP decides from all dimensions of $z$.
+
+The target row crosses the threshold through a rotation of its
+embedding, while the class centroids hardly shift. For flipped target
+rows, $\cos(z, z_0)$ drops to \zMcosZgekippt\ on average already at one
+poison row and to \zMcosZgekipptFuenf\ at five. The class centroids, in
+contrast, barely move: $\cos(\mu_T, \mu_{T,0})$ and
+$\cos(\mu_F, \mu_{F,0})$ stay at \zMcosMuAlleMin\ or above on average
+(Tables~\ref{tab:app_d_zz}
+and~\ref{tab:app_d_zentroide}), because the poison row enters $\mu_F$ as
+only one of many rows.
+
+Flipped and held target rows differ in their relative closeness without
+attack and in how much the attack changes it: at one poison row, flipped
+target rows lie closer to the threshold even without attack
+($m_0 = \zMstartGekippt$ against \zMstartGehalten) and the attack
+increases it more ($m - m_0 = \zMschubGekippt$ against \zMschubGehalten), both on almost
+all datasets (Tables~\ref{tab:app_m} and~\ref{tab:app_m_liste_m0}).
+
+Under attack, the target row moves into a different neighbourhood at the
+input of the MLP. Without attack, hardly any of its 25 nearest genuine
+context rows carries the wrong label ($\nu_F$ on average
+\zKoppICLohneMittel). Under one poison row, the number is
+\zKoppICLgekipptMittel\ for flipped target rows and
+\zKoppICLgehaltenMittel\ for held ones
+(Table~\ref{tab:app_kopp_ds_icl}), so most flipped target rows end up in
+a neighbourhood in which the wrong class holds the majority
+($\nu_F > 12.5$). This is a consequence of the
+rotation and not the reason for the flip: when the embedding of the target row rotates towards the wrong
+class, it is mainly rows of that class that lie near it afterwards. The
+MLP does not see these neighbours, it reads only $z$. $\nu_F$ thus
+describes where $z$ ends up, in the same representation that the MLP
+reads.
+
+In the control arm, the control row pulls the target row in the opposite
+direction, towards the centroid of the true class: with a single control
+row, $m$ is already smaller than without attack on all \zDS\ datasets
+(Table~\ref{tab:app_d_alle}), and $\nu_F$ drops from
+\zKoppICLohneMittel\ to \zKoppICLkontrMittel\
+(Table~\ref{tab:app_kopp_ds_icl}). As for the prediction
+(Section~\ref{sec:budget}), the label of the copy thus determines in
+which direction the embedding of the target row moves.
+
+\subsubsection{TabPFN: the weight of the poison rows}
+\label{sec:pfn}
+
+In TabPFN, the decision can be read off directly from the vote. Because
+$\pf = a_F$, the prediction flips as soon as the rows with the wrong
+label together receive more than half of the weight: $a_F > a_T$.
+Without attack, the wrong class is far from this: for the target rows
+that flip under one poison row, it receives on average
+\zPFNaFnullGekipptPct\,\% of the weight without attack, for those that
+hold \zPFNaFnullGehaltenPct\,\% (Figure~\ref{fig:vote}). Even without
+attack, flipped target rows thus start closer to the decision
+threshold. Because every
+poison row agrees with the target row in all features, it is natural to
+expect that the poison rows alone receive more than half of the weight.
+Research question~(3) tests this for the flipped target rows.
+
+For flipped target rows, a single poison row receives significantly less
+than half of the weight, on average \zPFNgiftEins\,\%. This holds on
+almost all datasets (research question~(3), $p \zHolmAPEins$,
+Table~\ref{tab:test_e}). It is nevertheless the strongest single row: for
+an average of \zPFNstaerksteEins\,\% of the flipped target rows, it
+carries the largest weight in the context
+(Table~\ref{tab:app_e_staerkste}). At the same time, the genuine rows of
+the wrong class gain weight: their joint weight rises to
+\zPFNechtEins\,\% on average, about four times as much as without attack.
+Flipping is therefore not due to the poison row alone: only together with
+the genuine rows of the wrong class does it lift the wrong class above the
+decision threshold. Section~\ref{sec:antworten} returns to this.
+
+\begin{figure}[!t]
+\centering
+\abbildung{fig_vote}
+\caption{TabPFN, the vote at one to three poison rows, one panel per $b$. Per panel, two bars each for the target rows that hold under attack and for those that flip: the same target rows without attack and under attack, per group over all datasets with target rows in the group (number of datasets above the panel). Because different target rows flip at every budget, the bars without attack differ between the panels. Shares of the vote are averaged per dataset, then over the datasets. Right: the share of the wrong label. The control arm and the values per dataset are shown in Tables~\ref{tab:app_e_vote_1} to~\ref{tab:app_e_vote_3}.}
+\label{fig:vote}
+\end{figure}
+
+With more poison rows, the split between poison rows and genuine rows
+reverses (Figure~\ref{fig:vote}). Two poison rows receive on average just
+over half, but only on two thirds of the datasets, and the result
+($p \zHolmAPZwei$) does not hold if one corrects over all 25 tests
+(Section~\ref{sec:statistik}). From three poison rows on, their weight lies significantly above the decision threshold on
+almost all datasets ($p < 0.001$)
+and, for most flipped target rows, suffices alone for flipping. The
+poison rows then account for \zPFNgiftDrei\,\% of the weight, the genuine
+rows of the wrong class for only \zPFNechtDrei\,\%. At one poison row, it
+is thus mainly the genuine rows that carry the flip, at three the poison
+rows. Even at three poison rows, the genuine rows of the wrong class
+still receive about three times as much as without attack. For flipped
+target rows, less and less weight remains for the true label:
+\zPFNwahrEins\,\% at one poison row, \zPFNwahrDrei\,\% at three. The
+flipped prediction is therefore not narrowly but confidently wrong. For
+held target rows, the weight of the wrong label stays at about one third
+at each of these budgets, because there the poison rows receive only
+about one fifth of the weight even at three poison rows.
+
+Under attack, the genuine rows of the wrong class gain weight on every
+dataset, for flipped as for held target rows
+(Table~\ref{tab:app_e_vote_1}). In the control arm it is the other way
+round: with one control row they lose weight on all \zDS\ datasets, and
+at three control rows the wrong label receives only
+\zPFNkontrFalschDrei\,\% of the weight instead of \zPFNohneFalsch\,\%
+without attack
+(Tables~\ref{tab:app_e_vote_1} to~\ref{tab:app_e_vote_3}). In both arms,
+the copy thus shifts the weight towards the class of its label.
+
+\section{Discussion}
+\label{sec:diskussion}
+
+\subsection{Answers to the research questions}
+\label{sec:antworten}
+
+A single poison row already flips the majority of the predictions that
+are correct without attack in both TFMs, and three poison rows flip
+almost all. The same copies with the true label flip almost no
+prediction, so in both TFMs the effect is due to the wrong label
+(research questions~(1a) and~(1b)). In TabICL, flipped target rows lie
+on average closer to the centroid of the wrong class under attack, and
+held ones closer to the centroid of the true class, significantly up to
+three poison rows. The readout rule reported for TabICL thus also holds
+under attack (research questions~(2a) and~(2b)). In TabPFN, a single
+poison row receives less than half of the weight for flipped target rows
+on average. From three poison rows on, the poison rows receive more than
+half, and for most flipped target rows their weight alone suffices for
+the flip (research question~(3)).
+
+The poison row flips the prediction in TabICL and TabPFN by different
+routes. In TabICL, the
+copy rotates the embedding of the target row towards the mean of the
+wrong class, while the class centroids keep their direction. The target
+row thus moves into a neighbourhood in which the wrong class holds the
+majority (Section~\ref{sec:icl}). In TabPFN, the label of the copy enters
+the vote of the decoder directly. The copy usually receives the largest
+weight, and together with it the genuine rows of the wrong class gain
+weight. \citet{nguyen2026} call it \enquote{joint processing} when a
+label in the context changes the effect of the other labels in this way.
+They show it for regression on five TFMs, among them TabICL in the
+version examined here and TabPFN in version~3, and find it mainly in the
+attention weights. Our measurements show joint processing for
+classification as well. At one poison row, the copy thus acts less as a
+vote than as a catalyst: it gives the genuine rows of the wrong class the
+weight that it lacks itself to flip the prediction. From three poison
+rows on, the copies carry the flip themselves.
+
+At one and two poison rows, more predictions flip in TabPFN than in
+TabICL. This difference does not protect TabICL, because the gap shrinks
+with every poison row, and two poison rows in TabICL already flip more
+predictions than one in TabPFN. Since the attacker chooses the budget,
+the difference costs the attacker only one additional row. The
+difference between the TFMs fits their two routes: in
+TabICL, the copy must first rotate the embedding of the target row,
+whereas in TabPFN its label enters the vote directly
+(Table~\ref{tab:app_kopp}). The two TFMs share the datasets on which many
+predictions flip, and CatBoost does not show this ranking
+(Section~\ref{sec:budget}). The ranking therefore does not follow from
+the datasets alone.
+
+Four studies that attack or exploit the context help to place these
+results. For
+single-layer linear transformers, \citet{anwar2025} prove that a single
+altered context row can force an arbitrary prediction. Our results show
+something similar for current TFMs, and without optimisation, because
+the exact copy is already the nearest evidence. \citet{bilos2026} attack
+the context in an untargeted way and measure how much the overall
+performance drops. Flipping the labels of the most central context rows
+lowers it by a few percentage points, and a single row with the wrong
+label at the centroid of a class hardly changes it. Here, a single copy that agrees with the target row in all
+features flips the majority of the target rows
+and leaves the other predictions almost unchanged
+(Section~\ref{sec:budget}): what matters is where a row lies, not how
+many there are.
+
+\citet{wahdany2026} use the same copy for membership inference, assuming
+that rows in the context resist relabelling. Our duplicates confirm
+this: no single copy flips a target row against a genuine duplicate with
+the true label (Table~\ref{tab:app_asr_ds_b}). Finally,
+\citet{djilani2026} use the context for
+defence against evasion attacks by gradually replacing context rows with
+adversarially perturbed examples. Our control arm shows the flip side of the attack:
+copies with the true label correct most wrong predictions
+(Section~\ref{sec:budget}).
+
+\subsection{Not a faulty inference but forged evidence}
+\label{sec:einezeile}
+
+Since a TFM approximates the posterior predictive distribution given its
+context (Section~\ref{sec:einleitung}), every context row counts as an
+observation, including a poison row: the model cannot check whether a
+label is correct. In feature space, an exact
+copy of the target row is the nearest evidence about it that a single
+context row can provide. Even one such row can flip the prediction, in TabPFN
+through its weight in the vote and in TabICL by rotating the embedding of
+the target row. Hence, the prediction of a TFM does not flip
+because of a faulty inference, but because the model infers soundly from
+an observation that is forged in this case.
+
+A faulty inference would have no reason to follow the label, to grow
+stronger with the number of copies or to weigh counter-evidence. The
+results show all three properties. First, the same copy with the true
+label flips almost no prediction and corrects most wrong ones. Second,
+more evidence has a stronger effect, since more poison rows flip more
+predictions. Third, counter-evidence is weighed. The target rows that
+hold lie deeper in the true class even without attack, in TabICL with a
+smaller $m_0$, in TabPFN with less weight on the wrong label. A poison row never prevails against a genuine duplicate
+with the true label, and five poison rows prevail against only a few
+duplicates. The TFM thus infers from the poison rows as from any other
+observation.
+
+Two further findings indicate that the influence of a poison row depends
+on its nearness to the target row. The effect of the attack stays confined to the target row, and
+the other predictions of its fold hardly change, whereas a faulty
+inference in the model would affect them as well. In TabPFN, moreover,
+the poison row usually receives the largest weight
+(Section~\ref{sec:antworten}), which is how its decoder is designed: it
+predicts the class through a soft nearest-neighbour retrieval over the
+context~\citep{grinsztajn2026}.
+
+Following the forged label is not peculiar to TFMs. Trained models do so
+as well: with one poison row, almost all predictions flip for the random
+forest and, for CatBoost, about as many as for TabICL. Hardly any flip
+for the logistic regression, which, however, also has the lowest
+performance without attack (mean AUC \zLRauc\ against \zICLauc\ and
+\zPFNauc\ for the TFMs). What is peculiar to the TFM is that no training
+lies between context and prediction: the poison row acts in a single
+forward pass. TFMs are thus in the same position as trained models, for
+which label flipping is considered effective~\citep{vassilev2025}.
+
+Language models show a similar weakness. Indirect prompt injection
+exploits the fact that their input changes their behaviour, which
+\citet{schneier2024} calls a feature rather than a bug. A language model
+is steered by injected instructions, a TFM by forged evidence. In both
+cases, the model cannot tell a manipulated input from a genuine one, so
+the defence lies at the trust boundary, here at the source of the
+context.
+
+\subsection{Implications for operation}
+\label{sec:trainiert}
+
+For the protection of the source of the context, the EU Artificial Intelligence Act (EU AI Act) and the NIST each provide
+a framework. For high-risk AI systems, the EU AI Act requires, for example,
+measures to prevent and detect attacks on the training data and
+input data
+\citep[Art.~15(5)]{euaiact2024}.
+Against targeted poisoning, the NIST names, for example, access controls,
+data validation and attestation of the provenance and integrity of the
+data. Against indirect prompt injection, the NIST proposes connecting untrusted sources only through defined
+interfaces~\citep{vassilev2025}.
+
+Technically, the context of a TFM lies between training data and input
+data in the sense of the EU AI Act. The Act defines training data as data
+used to fit learnable parameters, and input data as data on the basis of
+which the system produces an output~\citep[Art.~3(29) and~(33)]{euaiact2024}.
+Like input data, the context is passed only at prediction time and does
+not fit any parameters. Like training data, it provides the observations
+from which the TFM infers. Its legal categorisation is left to legal assessment. Regardless of this categorisation, the context differs from training
+data in when a poison row takes effect. A poison row reaches a trained
+model only before training, through data that are typically compiled,
+validated and versioned~\citep{baylor2017, breck2019, kreuzberger2023}.
+The same holds for a TFM with a \enquote{frozen} context: the context is fixed once
+and then used for all subsequent predictions, so here, too, a poison row
+can only get in beforehand.
+
+A \enquote{live} context is different. The TFM reads it at prediction time from a
+table that is written to in operation, so a new row takes effect at the
+very next prediction. It is what \citet{sculley2015} call an unstable
+data dependency, an input whose content can change at any time. The
+attacker can write the poison row as soon as the target row is known.
+The easiest position is that of someone who records cases with their
+outcome and submits an application of their own: a single copy of the
+application with the desired outcome often flips the prediction, a few
+copies almost always. A regularly retrained model~\citep{kreuzberger2023}
+approaches this case the shorter the interval between training and
+prediction. With a live context, there is no such interval: a
+poison row takes effect at the very next prediction.
+
+Three modes of operation that are currently offered or studied for TFMs
+read the context at prediction time. If their source is written to in
+operation, the context is live. A TFM can run as a function in a
+database and form its context directly from a table, so that predictions
+can be made with a database query, without a separate training
+step~\citep{kongdas2026, googlecloud2026}. Agents can assemble the
+context themselves in response to a request in natural language, so that
+predictions can be requested without writing
+code~\citep{priorlabsmcp2026}. Retrieval-based TFMs draw the nearest
+neighbours of each query row from a larger pool, so that TFMs scale to
+datasets too large to fit into the context~\citep{ma2025, thomas2024}. With retrieval, the exact copy is closest to the query
+row and is therefore selected for certain. At the same time, it faces
+fewer genuine rows, though the most similar ones.
+
+The results show that three established security requirements must cover
+the context of a TFM: access control, traceability and validation.
+
+\begin{enumerate}
+\item \textbf{Access control.} Write and overwrite access to the source
+of the context is access to the model and its predictions. It should be
+granted in the sense of the access controls named by the NIST, following
+the principle of least privilege~\citep{saltzer1975, nist2024csf}, for
+example as read-only access for everyone who does not need to record
+cases. The same applies to the pipelines that read data from the source
+and assemble the context: whoever can change them also determines which
+rows the model sees. In the experimental setup, in which the whole table
+forms the context, three poison rows flip almost all attacked predictions
+with this access and knowledge of the target row.
+
+\item \textbf{Traceability.} The context on which a prediction rested
+should be logged together with its provenance, that is, with the source
+and the state of the pipeline that assembled it~\citep{buneman2001}. In a
+TFM with a live context, the poison row can be deleted or overwritten
+after the prediction, and with it the trace of the attack. Moreover, a
+prediction can then be neither understood nor reproduced from the query
+row and the output alone, because it depends on the state of the context
+at the moment of prediction, and a single row can reverse it. Anyone who
+wants to understand such a decision needs the context on which it rests.
+Such a log can also deter: whoever knows that a poison row can be traced
+even after deletion must expect to be found out.
+
+\item \textbf{Validation.} A check of the context can be added at
+prediction time. Since the operator does not know which row an attack
+targets, every query row is a potential target, and the check must run
+before every prediction. Monitoring the overall performance of the model
+does not replace it, because such monitoring hardly notices the attack:
+the AUC on the remaining test rows stays almost unchanged. Against the
+attack studied here, a simple check suffices: an exact copy agrees with
+the query row in all features and can therefore be found as a duplicate.
+Applied before every prediction to duplicates of the query row, the check
+finds all poison rows in the experiment, at every budget, without a model
+and without a threshold. Without attack, it raises an alarm for
+\zDupSauber\,\% of all test rows on average (Appendix~\ref{app:dup}). An
+alarm is therefore a reason to check the prediction, not proof of an
+attack.
+\end{enumerate}
+
+The three requirements interlock. Access control is meant to prevent manipulation of the
+context. Validation is meant to find poison rows that get in
+nonetheless. Traceability is meant to establish what a prediction
+rested on, even if a poison row was deleted or overwritten afterwards. This corresponds to the prevention
+and detection required by the EU AI Act~\citep[Art.~15(5)]{euaiact2024},
+extended by investigation after the fact.
+
+\subsection{Limitations and open questions}
+\label{sec:grenzen}
+
+Three limitations determine how far the results reach.
+
+First, the study deliberately examines the most conspicuous form of the
+attack, the exact copy of the target row with the wrong label. A poison
+row that merely resembles the target row would escape a duplicate check.
+Harder to find would be a row that is close to the target row only in
+the representation of the model or that was constructed using its
+gradients. The latter, however, requires knowledge of the model and goes
+beyond the threat model considered here.
+
+Second, the scope is narrow: binary classification with numerical
+features, contexts of at most 2,400 rows, two TFMs whose results do not
+necessarily carry over to other TFMs, and datasets selected by the
+performance of the two TFMs examined. The datasets are broadly collected
+but not a sample from a defined population: the results describe these
+datasets, not a rate for tabular data in general. All models run at
+their default settings, and more strongly regularised trained models
+might flip less often. The target rows are balanced by class, so the ASR
+describes this sample and not the queries in operation.
+
+Third, the study describes what happens inside the models and does not
+explain it causally. The measures are approximations. $m$ reduces the
+embedding to two cosine values, although the MLP reads the whole
+embedding. The weights in TabPFN do not show whether the query of the
+target row or the keys of the context rows shift. $\nu_F$ counts the
+neighbours in TabICL with a set threshold.
+
+The measurements of this study open up several questions that can be
+pursued with the same setup. Interventions in the
+attention~\citep{vig2020, meng2022} can clarify whether TabICL decides by
+nearest neighbours or by the class centroids, whether the context rows
+shift together with the target row, and whether the gap between TabPFN
+and TabICL follows from their two routes. Further TFMs will show whether
+the shared ranking of the datasets is a property of TFMs in general.  With
+retrieval as the context, the effect of the poison row against the
+nearest neighbours of the target row can be measured. It can also be examined whether experts, alone or supported by a language
+model, recognise poison rows. Finally, it can be examined why, on
+average, about as many predictions flip for CatBoost as for TabICL,
+although they flip on different datasets.
+
+\section{Conclusion}
+\label{sec:fazit}
+
+Targeted in-context poisoning works even in its simplest form. An exact
+copy of the target row with the wrong label suffices to flip the majority
+of the predictions that are correct without attack in both TFMs, and a
+few copies flip almost all. The same copy with the true label flips
+almost none: the effect is due to the label. The performance on the
+remaining rows stays almost unchanged, so monitoring the overall
+performance hardly notices the attack.
+
+The TFMs do not err in their inference: they infer soundly from an
+observation that is forged in this case. Inside the TFMs, the poison row
+flips the prediction by two routes. In TabICL, it rotates the embedding
+of the target row towards the mean of the wrong class. In TabPFN, a
+single poison row receives on average less than half of the weight and
+pulls genuine rows of the wrong class along. From three poison rows on,
+the poison rows themselves receive more than half.
+
+What is new with TFMs is not the kind of vulnerability, since
+predictions of trained models such as random forest and CatBoost flip as
+well. What is new is the timing: the data take effect at the moment of
+prediction, and with a live context a poison row can be deleted or
+overwritten afterwards. Three established requirements for secure
+operation, which agree with the recommendations of the NIST against
+poisoning, must therefore cover the context of a TFM: access control,
+traceability and validation.
+
+Whoever can write the data from which a model infers can redirect
+individual predictions. In a TFM, this happens at the moment of
+prediction, and that is exactly where it can be checked.
+
+\backmatter
+
+\section*{Declarations}
+
+\bmhead{Funding} This study received no funding.
+
+\bmhead{Data availability} All datasets are publicly available on
+OpenML; their identifiers are given in Table~\ref{tab:app_daten_guete}.
+The measurements behind every table and figure and the code for the
+experiments, the tables and the figures are available at \url{https://github.com/adem-alparslan/ticp}.
+Packages, checkpoints and seeds are listed in Appendix~\ref{app:repro}.
+
+\bmhead{Use of AI tools} The study was conducted in October and November 2026. The author wrote the code himself, assisted by Claude Code (Anthropic; models Claude Opus 5.5 and Claude Fable 5.2). The AI assistant also checked the text for typos, translated the author’s German drafts into English, and checked numbers, the description of the methods and citations against the data, the code and the cited sources.
+
+\newcommand{\nurde}[1]{}
+\begin{appendices}
+\input{anhang_v5.0.tex}
+\end{appendices}
+
+\begin{thebibliography}{99}
+\setlength{\itemsep}{2pt}\small
+
+\bibitem[{Brown et~al.(2020)}]{brown2020}
+Brown TB, Mann B, Ryder N, et~al (2020) Language models are few-shot learners. In: Advances in
+Neural Information Processing Systems 33, pp~1877--1901
+
+\bibitem[{Müller et~al.(2022)}]{muller2022}
+Müller S, Hollmann N, Pineda~Arango S, Grabocka J, Hutter F (2022) Transformers can do Bayesian
+inference. In: International Conference on Learning Representations (ICLR)
+
+\bibitem[{Hollmann et~al.(2025)}]{hollmann2025}
+Hollmann N, Müller S, Purucker L, et~al (2025) Accurate predictions on small data with a tabular
+foundation model. Nature 637:319--326. \url{https://doi.org/10.1038/s41586-024-08328-6}
+
+\bibitem[{Qu et~al.(2025)}]{qu2025}
+Qu J, Holzmüller D, Varoquaux G, Le~Morvan M (2025) TabICL: a tabular foundation model for
+in-context learning on large data. In: Proceedings of the 42nd International Conference on Machine
+Learning, PMLR 267, pp~50817--50847
+
+\bibitem[{van Breugel and van der Schaar(2024)}]{vanbreugel2024}
+van Breugel B, van der Schaar M (2024) Position: why tabular foundation models should be a research
+priority. In: Proceedings of the 41st International Conference on Machine Learning, PMLR 235
+
+\bibitem[{Qu et~al.(2026)}]{qu2026}
+Qu J, Holzmüller D, Varoquaux G, Le~Morvan M (2026) TabICLv2: a better, faster, scalable, and open
+tabular foundation model. In: Proceedings of the 43rd International Conference on Machine Learning, PMLR 306, pp~102477--102555
+
+\bibitem[{Grinsztajn et~al.(2026)}]{grinsztajn2026}
+Grinsztajn L, Flöge K, Key O, et~al (2026) TabPFN-3: technical report.
+arXiv:2605.13986
+
+\bibitem[{Jäger et~al.(2026)}]{jaeger2026}
+Jäger B, Erickson N, Grinsztajn L, et~al (2026) TabPFN-3.5: technical report.
+arXiv:2609.17895
+
+\bibitem[{Kurashkin et~al.(2026)}]{kurashkin2026}
+Kurashkin SO, Tynchenko VS, Borodulin AS, Nelyub VA, Kalutsky NO, Connie T (2026) The current
+generation of tabular foundation models: a critical review. Mach Learn Knowl Extr 8(8):244.
+\url{https://doi.org/10.3390/make8080244}
+
+\bibitem[{SAP(2026)}]{sap2026}
+SAP (2026) TabPFN-3.5 Plus now available in SAP AI Core for instant business predictions. SAP News Center, 15~September 2026. \url{https://news.sap.com/2026/09/tabpfn-35-plus-now-available-sap-ai-core-instant-business-predictions/}.
+Accessed 1~November 2026
+
+\bibitem[{Kong and Das(2026)}]{kongdas2026}
+Kong W, Das A (2026) Introducing TabFM: a zero-shot foundation model for tabular data. Google
+Research Blog, 30~June 2026.
+\url{https://research.google/blog/introducing-tabfm-a-zero-shot-foundation-model-for-tabular-data/}.
+Accessed 1~November 2026
+
+\bibitem[{Google Cloud(2026)}]{googlecloud2026}
+Google Cloud (2026) The AI.PREDICT function. BigQuery documentation.
+\url{https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-ai-predict}.
+Accessed 13~October 2026
+
+\bibitem[{Biggio et~al.(2012)}]{biggio2012}
+Biggio B, Nelson B, Laskov P (2012) Poisoning attacks against support vector machines. In:
+Proceedings of the 29th International Conference on Machine Learning, pp~1467--1474
+
+\bibitem[{Xiao et~al.(2012)}]{xiao2012}
+Xiao H, Xiao H, Eckert C (2012) Adversarial label flips attack on support vector machines. In:
+Proceedings of the 20th European Conference on Artificial Intelligence (ECAI), pp~870--875. \url{https://doi.org/10.3233/978-1-61499-098-7-870}
+
+\bibitem[{Shafahi et~al.(2018)}]{shafahi2018}
+Shafahi A, Huang WR, Najibi M, Suciu O, Studer C, Dumitras T, Goldstein T (2018) Poison frogs!
+Targeted clean-label poisoning attacks on neural networks. In: Advances in Neural Information
+Processing Systems 31
+
+\bibitem[{Goldblum et~al.(2023)}]{goldblum2023}
+Goldblum M, Tsipras D, Xie C, Chen X, Schwarzschild A, Song D, Madry A, Li B, Goldstein T (2023)
+Dataset security for machine learning: data poisoning, backdoor attacks, and defenses. IEEE Trans
+Pattern Anal Mach Intell 45(2):1563--1580. \url{https://doi.org/10.1109/TPAMI.2022.3162397}
+
+\bibitem[{Cinà et~al.(2023)}]{cina2023}
+Cinà AE, Grosse K, Demontis A, Vascon S, Zellinger W, Moser BA, Oprea A, Biggio B, Pelillo M, Roli F
+(2023) Wild patterns reloaded: a survey of machine learning security against training data
+poisoning. ACM Comput Surv 55(13s):294. \url{https://doi.org/10.1145/3585385}
+
+\bibitem[{Vassilev et~al.(2025)}]{vassilev2025}
+Vassilev A, Oprea A, Fordyce A, Anderson H, Davies X, Hamin M (2025) Adversarial machine learning:
+a taxonomy and terminology of attacks and mitigations. NIST AI 100-2e2025, National Institute of
+Standards and Technology, Gaithersburg, MD. \url{https://doi.org/10.6028/NIST.AI.100-2e2025}
+
+\bibitem[{Djilani et~al.(2026)}]{djilani2026}
+Djilani M, Simonetto T, Tit K, Tambon F, Ghamizi S, Cordy M, Papadakis M (2026) On the robustness
+of tabular foundation models: test-time attacks and in-context defenses. In: 2026 IEEE Conference on Secure and Trustworthy Machine Learning (SaTML). IEEE, pp~368--391. \url{https://doi.org/10.1109/SaTML68715.2026.00028}
+
+\bibitem[{Biloš et~al.(2026)}]{bilos2026}
+Biloš M, Wilson JT, Schneider A, Nevmyvaka Y (2026) A mechanistic study of tabular foundation
+models. arXiv:2605.21288
+
+\bibitem[{Anwar et~al.(2025)}]{anwar2025}
+Anwar U, Von~Oswald J, Kirsch L, Krueger D, Frei S (2025) Understanding in-context learning of
+linear models in transformers through an adversarial lens. Transactions on Machine Learning Research
+
+\bibitem[{Wahdany et~al.(2026)}]{wahdany2026}
+Wahdany D, Jagielski M, Cresswell JC, Dziedzic A, Boenisch F (2026) TabPATE: differentially private
+tabular in-context learning without public data. arXiv:2606.31474
+
+\bibitem[{He et~al.(2025)}]{he2025}
+He P, Xu H, Xing Y, Liu H, Yamada M, Tang J (2025) Data poisoning for in-context learning. In: Findings of the Association for Computational Linguistics: NAACL 2025, pp~1680--1700. \url{https://doi.org/10.18653/v1/2025.findings-naacl.91}
+
+\bibitem[{Zou et~al.(2025)}]{zou2025}
+Zou W, Geng R, Wang B, Jia J (2025) PoisonedRAG: knowledge corruption attacks to retrieval-augmented
+generation of large language models. In: Proceedings of the 34th USENIX Security Symposium, pp~3827--3844
+
+\bibitem[{Greshake et~al.(2023)}]{greshake2023}
+Greshake K, Abdelnabi S, Mishra S, Endres C, Holz T, Fritz M (2023) Not what you've signed up for:
+compromising real-world LLM-integrated applications with indirect prompt injection. In: Proceedings
+of the 16th ACM Workshop on Artificial Intelligence and Security, pp~79--90. \url{https://doi.org/10.1145/3605764.3623985}
+
+\bibitem[{Prokhorenkova et~al.(2018)}]{prokhorenkova2018}
+Prokhorenkova L, Gusev G, Vorobev A, Dorogush AV, Gulin A (2018) CatBoost: unbiased boosting with
+categorical features. In: Advances in Neural Information Processing Systems 31
+
+\bibitem[{Vanschoren et~al.(2013)}]{vanschoren2014}
+Vanschoren J, van Rijn JN, Bischl B, Torgo L (2013) OpenML: networked science in machine learning.
+ACM SIGKDD Explor Newsl 15(2):49--60. \url{https://doi.org/10.1145/2641190.2641198}
+
+\bibitem[{Erickson et~al.(2025)}]{erickson2025}
+Erickson N, Purucker L, Tschalzev A, Holzmüller D, Desai PM, Salinas D, Hutter F (2025) TabArena: a
+living benchmark for machine learning on tabular data. In: Advances in Neural Information Processing
+Systems 38, Datasets and Benchmarks Track
+
+\bibitem[{Demšar(2006)}]{demsar2006}
+Demšar J (2006) Statistical comparisons of classifiers over multiple data sets.
+J Mach Learn Res 7:1--30
+
+\bibitem[{Nguyen et~al.(2026)}]{nguyen2026}
+Nguyen D, Chesneau N, Bhan M (2026) The standardization trap: certifying joint label processing in
+tabular foundation models. arXiv:2610.08314
+
+\bibitem[{Schneier(2024)}]{schneier2024}
+Schneier B (2024) LLMs' data-control path insecurity. Commun ACM 67(9):31--32.
+\url{https://doi.org/10.1145/3660674}
+
+\bibitem[{European Union(2024)}]{euaiact2024}
+European Union (2024) Regulation (EU) 2024/1689 of the European Parliament and of the Council of
+13 June 2024 laying down harmonised rules on artificial intelligence (Artificial Intelligence Act).
+Official Journal of the European Union, L series, 12~July 2024. \url{http://data.europa.eu/eli/reg/2024/1689/oj}
+
+\bibitem[{Baylor et~al.(2017)}]{baylor2017}
+Baylor D, Breck E, Cheng HT, Fiedel N, Foo CY, Haque Z, Haykal S, Ispir M, Jain V, Koc L, Koo CY,
+Lew L, Mewald C, Modi AN, Polyzotis N, Ramesh S, Roy S, Whang SE, Wicke M, Wilkiewicz J, Zhang X,
+Zinkevich M (2017) TFX: a TensorFlow-based production-scale machine learning platform. In:
+Proceedings of the 23rd ACM SIGKDD International Conference on Knowledge Discovery and Data
+Mining, pp~1387--1395. \url{https://doi.org/10.1145/3097983.3098021}
+
+\bibitem[{Breck et~al.(2019)}]{breck2019}
+Breck E, Zinkevich M, Polyzotis N, Whang S, Roy S (2019) Data validation for machine learning. In: Proceedings of Machine Learning and Systems (SysML)
+
+\bibitem[{Kreuzberger et~al.(2023)}]{kreuzberger2023}
+Kreuzberger D, Kühl N, Hirschl S (2023) Machine learning operations (MLOps): overview,
+definition, and architecture. IEEE Access 11:31866--31879. \url{https://doi.org/10.1109/ACCESS.2023.3262138}
+
+\bibitem[{Sculley et~al.(2015)}]{sculley2015}
+Sculley D, Holt G, Golovin D, Davydov E, Phillips T, Ebner D, Chaudhary V, Young M, Crespo JF, Dennison D (2015) Hidden technical debt in machine learning systems. In: Advances in Neural Information Processing Systems 28
+
+\bibitem[{Prior Labs(2026)}]{priorlabsmcp2026}
+Prior Labs (2026) Model Context Protocol: TabPFN MCP. TabPFN documentation.
+\url{https://docs.priorlabs.ai/agentic/mcp}. Accessed 7~November 2026
+
+\bibitem[{Ma et~al.(2025)}]{ma2025}
+Ma J, Thomas V, Hosseinzadeh R, Labach A, Cresswell JC, Golestan K, Yu G, Caterini AL, Volkovs M (2025) TabDPT: scaling tabular foundation models on real data. In: Advances in Neural Information Processing Systems 38
+
+\bibitem[{Thomas et~al.(2024)}]{thomas2024}
+Thomas V, Ma J, Hosseinzadeh R, Golestan K, Yu G, Volkovs M, Caterini A (2024) Retrieval \&
+fine-tuning for in-context tabular models. In: Advances in Neural Information Processing Systems 37
+
+\bibitem[{Saltzer and Schroeder(1975)}]{saltzer1975}
+Saltzer JH, Schroeder MD (1975) The protection of information in computer systems. Proc IEEE
+63(9):1278--1308. \url{https://doi.org/10.1109/PROC.1975.9939}
+
+\bibitem[{NIST(2024)}]{nist2024csf}
+National Institute of Standards and Technology (2024) The NIST Cybersecurity Framework (CSF) 2.0.
+NIST CSWP 29. \url{https://doi.org/10.6028/NIST.CSWP.29}
+
+\bibitem[{Buneman et~al.(2001)}]{buneman2001}
+Buneman P, Khanna S, Tan WC (2001) Why and where: a characterization of data provenance. In:
+Database Theory -- ICDT 2001. Lecture Notes in Computer Science 1973, pp~316--330. \url{https://doi.org/10.1007/3-540-44503-X_20}
+
+\bibitem[{Vig et~al.(2020)}]{vig2020}
+Vig J, Gehrmann S, Belinkov Y, Qian S, Nevo D, Singer Y, Shieber S (2020) Investigating gender bias
+in language models using causal mediation analysis. In: Advances in Neural Information Processing
+Systems 33
+
+\bibitem[{Meng et~al.(2022)}]{meng2022}
+Meng K, Bau D, Andonian A, Belinkov Y (2022) Locating and editing factual associations in GPT. In:
+Advances in Neural Information Processing Systems 35
+
+\end{thebibliography}
+
+\end{document}
