@@ -23,3 +23,5 @@ manuscript.zip
 manuscript/ticp_alparslan_v5.0.pdf
 # a compiled manuscript must not end up among the generators
 paper/*.pdf
+# arXiv upload, built from manuscript.zip
+arxiv.zip
